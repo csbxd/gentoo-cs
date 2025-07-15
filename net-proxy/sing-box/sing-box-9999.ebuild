@@ -13,7 +13,7 @@ EGIT_BRANCH="dev-next"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS=""
-IUSE="+quic grpc +dhcp +wireguard +utls +acme +clash-api v2ray-api +gvisor tor +tailscale"
+IUSE="+quic grpc +dhcp +wireguard +utls +acme +clash-api v2ray-api gvisor tor tailscale"
 
 DEPEND="${RDEPEND}"
 

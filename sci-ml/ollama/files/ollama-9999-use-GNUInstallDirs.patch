@@ -1,0 +1,27 @@
+From e58f62241134be6e24596d55c7d0526c7da6c0ab Mon Sep 17 00:00:00 2001
+From: Your Name <you@example.com>
+Date: Sat, 20 Sep 2025 23:44:16 +0800
+Subject: [PATCH] fix: patch
+
+---
+ CMakeLists.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 198fcdeb..1b0a819f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -37,8 +37,9 @@ if (CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+     set(CMAKE_INSTALL_RPATH "@loader_path")
+ endif()
+ 
+-set(OLLAMA_BUILD_DIR ${CMAKE_BINARY_DIR}/lib/ollama)
+-set(OLLAMA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ollama/${OLLAMA_RUNNER_DIR})
++include(GNUInstallDirs)
++set(OLLAMA_BUILD_DIR ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/ollama)
++set(OLLAMA_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/ollama/${OLLAMA_RUNNER_DIR})
+ 
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY         ${OLLAMA_BUILD_DIR})
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${OLLAMA_BUILD_DIR})
+-- 
+2.51.0

@@ -87,7 +87,9 @@ src_unpack() {
 
 	mkdir -p "${WORKDIR}/main" "${WORKDIR}/compat" || die
 
-	if [[ -n "${ECLOUD_MAIN_DEB:-}" && -f "${ECLOUD_MAIN_DEB}" ]]; then
+	if [[ -f "${FILESDIR}/${MY_MAIN_DEB}" ]]; then
+		main_deb="${FILESDIR}/${MY_MAIN_DEB}"
+	elif [[ -n "${ECLOUD_MAIN_DEB:-}" && -f "${ECLOUD_MAIN_DEB}" ]]; then
 		main_deb="${ECLOUD_MAIN_DEB}"
 	elif [[ -f "${DISTDIR}/${MY_MAIN_DEB}" ]]; then
 		main_deb="${DISTDIR}/${MY_MAIN_DEB}"
@@ -101,7 +103,7 @@ src_unpack() {
 	fi
 
 	[[ -n "${main_deb}" ]] || die \
-		"Missing ${MY_MAIN_DEB}; set ECLOUD_MAIN_DEB or put it in DISTDIR (${DISTDIR})"
+		"Missing ${MY_MAIN_DEB}; provide it via FILESDIR, ECLOUD_MAIN_DEB, or DISTDIR (${DISTDIR})"
 
 	pushd "${WORKDIR}/main" >/dev/null || die
 	unpack_deb "${main_deb}"

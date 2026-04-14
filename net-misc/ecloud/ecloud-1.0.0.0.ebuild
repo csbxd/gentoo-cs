@@ -189,7 +189,7 @@ src_install() {
 		Exec=/usr/bin/ecloud %U
 		Terminal=false
 		Type=Application
-		Icon=ecloud
+		Icon=com.dlife.ecloud
 		StartupWMClass=天翼云盘
 		Comment=文件云端存储 从此抛弃U盘 文件自动同步 便捷上传下载。
 		MimeType=x-scheme-handler/ecloud;
@@ -200,4 +200,14 @@ src_install() {
 
 	dodir /usr/share/icons/hicolor
 	cp -a "${icon_src}/." "${ED}/usr/share/icons/hicolor/" || die
+}
+
+pkg_postinst() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
+}
+
+pkg_postrm() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }

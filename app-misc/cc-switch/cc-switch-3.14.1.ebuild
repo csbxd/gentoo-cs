@@ -34,7 +34,7 @@ RDEPEND="
 BDEPEND="
 	net-libs/nodejs
 	sys-apps/pnpm
-	virtual/rust
+	|| ( dev-lang/rust dev-lang/rust-bin )
 	x11-misc/xdg-utils
 "
 

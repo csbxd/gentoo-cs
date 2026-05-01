@@ -33,7 +33,6 @@ RDEPEND="
 
 BDEPEND="
 	net-libs/nodejs
-	sys-apps/pnpm
 	|| ( dev-lang/rust dev-lang/rust-bin )
 	x11-misc/xdg-utils
 "
@@ -47,8 +46,8 @@ src_compile() {
 	# fix for static link (following PKGBUILD)
 	unset CFLAGS CXXFLAGS LDFLAGS
 	
-	pnpm install --frozen-lockfile || die
-	pnpm tauri build --no-bundle || die
+	corepack pnpm install --frozen-lockfile || die
+	corepack pnpm tauri build --no-bundle || die
 }
 
 src_install() {

@@ -46,8 +46,17 @@ src_compile() {
 	# fix for static link (following PKGBUILD)
 	unset CFLAGS CXXFLAGS LDFLAGS
 	
-	corepack pnpm install --frozen-lockfile || die
-	corepack pnpm tauri build --no-bundle || die
+	local pnpm_cmd
+	if type -P pnpm >/dev/null; then
+		pnpm_cmd="pnpm"
+	elif type -P corepack >/dev/null; then
+		pnpm_cmd="corepack pnpm"
+	else
+		die "Neither pnpm nor corepack found. Please install sys-apps/pnpm or ensure net-libs/nodejs is built with corepack."
+	fi
+	
+	${pnpm_cmd} install --frozen-lockfile || die
+	${pnpm_cmd} tauri build --no-bundle || die
 }
 
 src_install() {

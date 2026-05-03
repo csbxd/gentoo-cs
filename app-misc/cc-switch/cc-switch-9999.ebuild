@@ -38,9 +38,6 @@ BDEPEND="
 	dev-vcs/git
 "
 
-PATCHES=(
-	"${FILESDIR}/0001-add-duplicate-action-for-universal-providers.patch"
-)
 
 src_compile() {
 	export CARGO_TARGET_DIR="${S}/target"

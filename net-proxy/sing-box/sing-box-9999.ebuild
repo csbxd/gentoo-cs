@@ -38,6 +38,7 @@ src_unpack() {
 
 src_compile() {
 	local mytags
+	local version
 	use quic && mytags+="with_quic,"
 	use grpc && mytags+="with_grpc,"
 	use dhcp && mytags+="with_dhcp,"
@@ -54,9 +55,11 @@ src_compile() {
 	use naive && mytags+="with_purego,with_naive_outbound,"
 	use cloudflared && mytags+="with_cloudflared,"
 
+	version="$(go run ./cmd/internal/read_tag)" || die "failed to calculate version"
+
 	ego build -tags "${mytags%,}" \
 		-gcflags=-l=4 \
-		-ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${PV}'" \
+		-ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${version}'" \
 		./cmd/sing-box
 
 	mkdir completions || die

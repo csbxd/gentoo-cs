@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<upstream>
+		<doc>https://sing-box.sagernet.org/</doc>
+		<bugs-to>https://github.com/SagerNet/sing-box/issues</bugs-to>
+		<remote-id type="github">SagerNet/sing-box</remote-id>
+	</upstream>
+	<use>
+		<flag name="quic">Build with QUIC support</flag>
+		<flag name="grpc">Build with standard gRPC support</flag>
+		<flag name="dhcp">Build with DHCP support</flag>
+		<flag name="wireguard">Build with WireGuard support</flag>
+		<flag name="utls">Build with uTLS support for TLS outbound</flag>
+		<flag name="acme">Build with ACME TLS certificate issuer support</flag>
+		<flag name="clash-api">Build with Clash API support</flag>
+		<flag name="v2ray-api">Build with V2Ray API support</flag>
+		<flag name="gvisor">Build with gVisor support</flag>
+		<flag name="tor">Build with embedded Tor support</flag>
+		<flag name="tailscale">Build with Tailscale support</flag>
+		<flag name="ccm">Build with Claude Code Multiplexer service support</flag>
+		<flag name="ocm">Build with OpenAI Codex Multiplexer service support</flag>
+		<flag name="naive">Build with NaiveProxy outbound support</flag>
+		<flag name="cloudflared">Build with Cloudflare Tunnel inbound support</flag>
+	</use>
+</pkgmetadata>

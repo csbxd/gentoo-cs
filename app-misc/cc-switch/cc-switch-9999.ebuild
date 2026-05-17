@@ -38,6 +38,23 @@ BDEPEND="
 	dev-vcs/git
 "
 
+src_prepare() {
+	default
+
+	# pnpm 11 aborts on unapproved dependency build scripts.
+	cat > pnpm-workspace.yaml <<-'EOF' || die
+	packages: []
+
+	allowBuilds:
+	  esbuild: true
+	  msw: true
+
+	onlyBuiltDependencies:
+	  - '@tailwindcss/oxide'
+	  - esbuild
+	  - msw
+	EOF
+}
 
 src_compile() {
 	export CARGO_TARGET_DIR="${S}/target"

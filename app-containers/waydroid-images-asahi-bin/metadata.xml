@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    Installs prebuilt Waydroid system and vendor images for Apple Silicon Asahi Linux
+    machines that use a 16 KiB host page size. The matching images are intended to be
+    built locally with the helper script in this overlay and then published as release
+    assets that this package downloads and verifies.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">csbxd/gentoo-cs</remote-id>
+    <remote-id type="github">UtkarshVerma/waydroid-on-asahi</remote-id>
+  </upstream>
+</pkgmetadata>

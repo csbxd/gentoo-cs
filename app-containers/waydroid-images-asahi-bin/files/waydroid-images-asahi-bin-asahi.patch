@@ -1,0 +1,50 @@
+diff --git a/device/waydroid/waydroid/waydroid_arm64_only/lineage_waydroid_arm64_only.mk b/device/waydroid/waydroid/waydroid_arm64_only/lineage_waydroid_arm64_only.mk
+index b52d8f0..0f8d4cf 100644
+--- a/device/waydroid/waydroid/waydroid_arm64_only/lineage_waydroid_arm64_only.mk
++++ b/device/waydroid/waydroid/waydroid_arm64_only/lineage_waydroid_arm64_only.mk
+@@ -27,6 +27,10 @@ ifeq ($(ANDROID_BUILD_GAPPS),true)
+ $(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
+ endif
+ 
++PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
++PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384
++PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := true
++
+ PRODUCT_BRAND := waydroid
+ PRODUCT_DEVICE := waydroid_arm64_only
+ PRODUCT_MANUFACTURER := Waydroid
+diff --git a/device/waydroid/waydroid/device.mk b/device/waydroid/waydroid/device.mk
+index e735f74..ab6824f 100644
+--- a/device/waydroid/waydroid/device.mk
++++ b/device/waydroid/waydroid/device.mk
+@@ -67,7 +67,6 @@ USE_CAMERA_V4L2_HAL := true
+ 
+ PRODUCT_PACKAGES += \
+-    android.hardware.camera.provider@2.7-external-service \
+     camera.v4l2
+ 
+ PRODUCT_COPY_FILES += \
+@@ -131,10 +130,6 @@ PRODUCT_PACKAGES += \
+     vulkan.radeon \
+     vulkan.nouveau
+ else
+-PRODUCT_PACKAGES += \
+-    vulkan.freedreno \
+-    vulkan.broadcom \
+-    vulkan.panfrost
+ endif
+ 
+ PRODUCT_COPY_FILES += \
+diff --git a/external/ffmpeg/libavcodec/mpegvideo.c b/external/ffmpeg/libavcodec/mpegvideo.c
+index d418c0e..c312c0c 100644
+--- a/external/ffmpeg/libavcodec/mpegvideo.c
++++ b/external/ffmpeg/libavcodec/mpegvideo.c
+@@ -334,7 +334,7 @@ av_cold void ff_mpv_idct_init(MpegEncContext *s)
+         s->dct_unquantize_mpeg2_intra = dct_unquantize_mpeg2_intra_bitexact;
+     s->dct_unquantize_mpeg2_inter = dct_unquantize_mpeg2_inter_c;
+ 
+-#if HAVE_INTRINSICS_NEON
++#if HAVE_INTRINSICS_NEON && ARCH_ARM
+     ff_mpv_common_init_neon(s);
+ #endif
+ 

@@ -17,6 +17,7 @@ Optional arguments:
   --vendor-repo REPO     WayDroid vendor repo (default: WayDroid-ATV/android_vendor_waydroid)
   --vendor-ref REF       WayDroid vendor ref (default: lineage-23.0)
   --gapps                Build the GApps variant instead of vanilla
+  --no-repo-verify       Disable repo's GPG verification during repo init
   --skip-sync            Skip both repo sync phases
   --skip-lfs             Skip git-lfs pulls
 EOF
@@ -77,6 +78,7 @@ LINEAGE_BRANCH=lineage-23.0
 VENDOR_REPO=WayDroid-ATV/android_vendor_waydroid
 VENDOR_REF=lineage-23.0
 BUILD_GAPPS=0
+NO_REPO_VERIFY=0
 SKIP_SYNC=0
 SKIP_LFS=0
 
@@ -118,6 +120,10 @@ while [[ $# -gt 0 ]]; do
 			BUILD_GAPPS=1
 			shift
 			;;
+		--no-repo-verify)
+			NO_REPO_VERIFY=1
+			shift
+			;;
 		--skip-sync)
 			SKIP_SYNC=1
 			shift
@@ -152,7 +158,16 @@ mkdir -p "${CCACHE_DIR}"
 if [[ ! -d ${ANDROID_TOP}/.repo ]]; then
 	(
 		cd "${ANDROID_TOP}"
-		repo init -u https://github.com/LineageOS/android.git -b "${LINEAGE_BRANCH}" --git-lfs
+		repo_init_args=(
+			-u "https://github.com/LineageOS/android.git"
+			-b "${LINEAGE_BRANCH}"
+			--git-lfs
+			--no-clone-bundle
+		)
+		if [[ ${NO_REPO_VERIFY} -eq 1 ]]; then
+			repo_init_args+=( --no-repo-verify )
+		fi
+		repo init "${repo_init_args[@]}"
 	)
 fi
 
@@ -165,6 +180,8 @@ fi
 tmp_manifest_script=$(mktemp)
 trap 'rm -f "${tmp_manifest_script}"' EXIT
 curl --retry 3 -fsSL \
+	--retry-all-errors \
+	--http1.1 \
 	"https://raw.githubusercontent.com/${VENDOR_REPO}/${VENDOR_REF}/manifest_scripts/generate-manifest.sh" \
 	-o "${tmp_manifest_script}"
 bash "${tmp_manifest_script}"

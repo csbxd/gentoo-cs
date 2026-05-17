@@ -7,6 +7,7 @@ DESCRIPTION="Asahi-tuned Waydroid images for 16 KiB page-size systems"
 HOMEPAGE="
 	https://waydro.id
 	https://github.com/csbxd/gentoo-cs
+	https://github.com/yuk1n0w/waydroid-on-asahi
 	https://github.com/UtkarshVerma/waydroid-on-asahi
 "
 
@@ -29,7 +30,7 @@ waydroid_asahi_release_base() {
 	if [[ -n ${WAYDROID_ASAHI_RELEASE_BASE} ]]; then
 		printf '%s\n' "${WAYDROID_ASAHI_RELEASE_BASE%/}"
 	else
-		printf '%s\n' "https://github.com/csbxd/gentoo-cs/releases/download/waydroid-images-asahi-${PV}"
+		printf '%s\n' "https://github.com/yuk1n0w/waydroid-on-asahi/releases/download/LineageOS-23"
 	fi
 }
 
@@ -84,6 +85,6 @@ src_install() {
 pkg_postinst() {
 	elog "Installed Asahi-tuned Waydroid images to /usr/share/waydroid-extra/images."
 	elog "Run 'waydroid init -f' to switch Waydroid to these images."
-	elog "Override the default asset location with WAYDROID_ASAHI_RELEASE_BASE if needed."
+	elog "Override the upstream asset location with WAYDROID_ASAHI_RELEASE_BASE if needed."
 	ewarn "Known limitation: camera support is disabled in this build."
 }

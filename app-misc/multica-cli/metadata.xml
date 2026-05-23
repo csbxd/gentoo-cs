@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<upstream>
+		<doc>https://multica.ai</doc>
+		<bugs-to>https://github.com/multica-ai/multica/issues</bugs-to>
+		<remote-id type="github">multica-ai/multica</remote-id>
+	</upstream>
+</pkgmetadata>

@@ -52,14 +52,12 @@ RDEPEND="
 BDEPEND="
 	>=dev-lang/go-1.26.1:=
 	dev-vcs/git
-	net-libs/nodejs[corepack]
+	net-libs/nodejs
+	>=sys-apps/pnpm-bin-10.28.2
+	<sys-apps/pnpm-bin-11
 "
 
 src_compile() {
-	local pnpm_cmd
-
-	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-	export COREPACK_HOME="${T}/corepack"
 	export ELECTRON_CACHE="${T}/electron-cache"
 	export GOCACHE="${T}/go-cache"
 	export GOMODCACHE="${T}/go-mod"
@@ -67,16 +65,8 @@ src_compile() {
 	export pnpm_config_store_dir="${T}/pnpm-store"
 	export XDG_CACHE_HOME="${T}/xdg-cache"
 
-	if type -P pnpm >/dev/null; then
-		pnpm_cmd="pnpm"
-	elif type -P corepack >/dev/null; then
-		pnpm_cmd="corepack pnpm"
-	else
-		die "Neither pnpm nor corepack found. Rebuild net-libs/nodejs with USE=corepack."
-	fi
-
-	${pnpm_cmd} install --frozen-lockfile || die
-	${pnpm_cmd} -C apps/desktop package -- --linux dir || die
+	pnpm install --frozen-lockfile || die
+	pnpm -C apps/desktop package -- --linux dir || die
 }
 
 src_install() {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    libgbinder provides a GLib-style Binder IPC interface with protocol backends
+    for multiple Android releases.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">mer-hybris/libgbinder</remote-id>
+  </upstream>
+</pkgmetadata>

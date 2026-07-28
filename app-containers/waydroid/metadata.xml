@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    Waydroid uses Linux namespaces to run a full Android system in a container
+    and integrates Android applications into a Wayland desktop session.
+  </longdescription>
+  <use>
+    <flag name="clipboard">Enable clipboard integration using dev-python/pyclip</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">waydroid/waydroid</remote-id>
+  </upstream>
+</pkgmetadata>

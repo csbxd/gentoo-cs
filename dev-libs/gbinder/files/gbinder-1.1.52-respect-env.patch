@@ -2,24 +2,13 @@ diff --git a/Makefile b/Makefile
 index bc77720..9831c2c 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -146,8 +146,8 @@ FULL_LDFLAGS = $(BASE_FLAGS) $(LDFLAGS) -shared -Wl,-soname,$(LIB_SONAME) \
- DEBUG_LDFLAGS = $(FULL_LDFLAGS) $(DEBUG_LIBS)
- RELEASE_LDFLAGS = $(FULL_LDFLAGS) $(RELEASE_LIBS)
+@@ -148,3 +148,3 @@
 -DEBUG_CFLAGS = $(FULL_CFLAGS) -DDEBUG
 -RELEASE_CFLAGS = $(FULL_CFLAGS) -O2
 -COVERAGE_CFLAGS = $(FULL_CFLAGS) -O0 --coverage -fprofile-update=atomic
 +DEBUG_CFLAGS = $(FULL_CFLAGS)
 +RELEASE_CFLAGS = $(FULL_CFLAGS)
 +COVERAGE_CFLAGS = $(FULL_CFLAGS) --coverage -fprofile-update=atomic
- 
- #
- # Files
-@@ -274,7 +274,7 @@ $(DEBUG_SO): $(DEBUG_OBJS)
- $(RELEASE_SO): $(RELEASE_OBJS)
- 	$(LD) $(RELEASE_OBJS) $(RELEASE_LDFLAGS) -o $@
- ifeq ($(KEEP_SYMBOLS),0)
+@@ -277 +277 @@
 -	$(STRIP) $@
 +#	$(STRIP) $@
- endif
- 
- $(DEBUG_LIB): $(DEBUG_OBJS)

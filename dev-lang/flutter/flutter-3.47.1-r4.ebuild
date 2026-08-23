@@ -53,6 +53,9 @@ The first flutter invocation compiles flutter_tools with ARM64 Dart and
 downloads Linux ARM64 engine artifacts on demand. Android SDK, NDK and Android
 engine artifacts are intentionally not dependencies of this package.
 
+The wrapper removes an unused x86-64 frontend snapshot mistakenly bundled in
+Flutter 3.47.1's Linux ARM64 engine archive after each invocation.
+
 Flutter writes into its own SDK tree. The tree is group-writable by the
 'flutter' group. Add trusted users to that group and start a new login session:
 

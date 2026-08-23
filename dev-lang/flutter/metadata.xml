@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<longdescription lang="en">
+		Flutter SDK for native Linux ARM64 hosts. The package uses the system
+		ARM64 Dart SDK and bootstraps host artifacts on first use.
+	</longdescription>
+	<use>
+		<flag name="examples">Install Flutter example projects</flag>
+		<flag name="linux-desktop">Install dependencies for Linux desktop builds</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">flutter/flutter</remote-id>
+		<bugs-to>https://github.com/flutter/flutter/issues</bugs-to>
+		<doc lang="en">https://docs.flutter.dev/</doc>
+	</upstream>
+</pkgmetadata>

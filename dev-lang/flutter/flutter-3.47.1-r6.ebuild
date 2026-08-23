@@ -53,6 +53,11 @@ Use the /usr/bin/flutter wrapper rather than invoking /opt/flutter/bin/flutter
 directly. The wrapper marks the shared root-owned SDK as safe for Flutter's Git
 subprocesses without changing the user's global Git configuration.
 
+On Linux ARM64, the wrapper also redirects Flutter's Gradle subprocess to
+~/Android/Sdk/build-tools/36.1.0/aapt2 when that native binary exists. The
+override is scoped to the current Flutter command; no Gradle configuration or
+extra command-line parameter is required.
+
 The first flutter invocation compiles flutter_tools with ARM64 Dart and
 downloads Linux ARM64 engine artifacts on demand. Android SDK, NDK and Android
 engine artifacts are intentionally not dependencies of this package.

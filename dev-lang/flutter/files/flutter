@@ -7,6 +7,29 @@ export GIT_CONFIG_COUNT=1
 export GIT_CONFIG_KEY_0=safe.directory
 export GIT_CONFIG_VALUE_0=/opt/flutter
 
+# Android Gradle Plugin publishes only an x86-64 Linux aapt2. On a Linux
+# ARM64 host, transparently redirect Flutter's Gradle subprocess to the native
+# SDK binary. This affects only this Flutter invocation and does not modify
+# global or project Gradle configuration.
+if [ "$(uname -s)" = Linux ]; then
+	case "$(uname -m)" in
+		aarch64|arm64)
+			android_sdk_root=${ANDROID_SDK_ROOT:-${ANDROID_HOME:-${HOME}/Android/Sdk}}
+			aapt2_path="${android_sdk_root}/build-tools/36.1.0/aapt2"
+			if [ -x "${aapt2_path}" ]; then
+				aapt2_override="-Dorg.gradle.project.android.aapt2FromMavenOverride=${aapt2_path}"
+				case " ${GRADLE_OPTS-} " in
+					*org.gradle.project.android.aapt2FromMavenOverride=*) ;;
+					*)
+						GRADLE_OPTS="${GRADLE_OPTS:+${GRADLE_OPTS} }${aapt2_override}"
+						export GRADLE_OPTS
+						;;
+				esac
+			fi
+			;;
+	esac
+fi
+
 /opt/flutter/bin/flutter "$@"
 flutter_status=$?
 

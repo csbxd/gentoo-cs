@@ -33,6 +33,7 @@ RDEPEND="
 
 BDEPEND="
 	net-libs/nodejs
+	sys-apps/pnpm
 	|| ( dev-lang/rust dev-lang/rust-bin )
 	x11-misc/xdg-utils
 	dev-vcs/git
@@ -58,20 +59,13 @@ src_prepare() {
 
 src_compile() {
 	export CARGO_TARGET_DIR="${S}/target"
+	export pnpm_config_store_dir="${T}/pnpm-store"
+	export XDG_CACHE_HOME="${T}/xdg-cache"
 	# fix for static link (following PKGBUILD)
 	unset CFLAGS CXXFLAGS LDFLAGS
-	
-	local pnpm_cmd
-	if type -P pnpm >/dev/null; then
-		pnpm_cmd="pnpm"
-	elif type -P corepack >/dev/null; then
-		pnpm_cmd="corepack pnpm"
-	else
-		die "Neither pnpm nor corepack found. Please install sys-apps/pnpm or ensure net-libs/nodejs is built with corepack."
-	fi
-	
-	${pnpm_cmd} install --frozen-lockfile || die
-	${pnpm_cmd} tauri build --no-bundle || die
+
+	pnpm install --frozen-lockfile || die
+	pnpm tauri build --no-bundle || die
 }
 
 src_install() {

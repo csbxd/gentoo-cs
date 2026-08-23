@@ -19,7 +19,7 @@ EGIT_SUBMODULES=()
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="-* ~arm64"
-IUSE="+linux-desktop examples"
+IUSE="+linux-desktop"
 RESTRICT="strip"
 
 DEPEND="acct-group/flutter"
@@ -45,6 +45,10 @@ ARM64 system Dart SDK from dev-lang/dart-3.13.1.
 Enable and sync the Bentoo repository before installing this package; Bentoo
 provides the matching ARM64 Dart package.
 
+Use the /usr/bin/flutter wrapper rather than invoking /opt/flutter/bin/flutter
+directly. The wrapper marks the shared root-owned SDK as safe for Flutter's Git
+subprocesses without changing the user's global Git configuration.
+
 The first flutter invocation compiles flutter_tools with ARM64 Dart and
 downloads Linux ARM64 engine artifacts on demand. Android SDK, NDK and Android
 engine artifacts are intentionally not dependencies of this package.
@@ -59,7 +63,6 @@ Manage Flutter upgrades through Portage rather than running 'flutter upgrade'."
 
 src_prepare() {
 	default
-	find . -iname '*.bat' -delete || die
 	rm -rf bin/cache || die
 
 	# git-r3 checkouts borrow objects from DISTDIR. Make the installed clone
@@ -71,6 +74,7 @@ src_prepare() {
 
 	git remote remove origin >/dev/null 2>&1 || :
 	git remote add origin "${EGIT_REPO_URI}" || die
+	git update-ref refs/remotes/origin/stable "${FLUTTER_COMMIT}" || die
 	git config branch.stable.remote origin || die
 	git config branch.stable.merge refs/heads/stable || die
 }
@@ -80,8 +84,6 @@ src_compile() {
 }
 
 src_install() {
-	use examples || { rm -r examples/ || die; }
-
 	# Keep Flutter from replacing the system Dart symlink on first launch.
 	mkdir -p bin/cache || die
 	printf '%s\n' "${FLUTTER_ENGINE_COMMIT}" > bin/cache/engine-dart-sdk.stamp || die
@@ -96,7 +98,7 @@ src_install() {
 	find "${ED}/opt/${PN}" -type d -exec chmod g+s {} + || die
 
 	dosym /usr/lib/dart "/opt/${PN}/bin/cache/dart-sdk"
-	dosym "../${PN}/bin/${PN}" "/opt/bin/${PN}"
+	newbin "${FILESDIR}/${PN}" "${PN}"
 }
 
 pkg_postinst() {

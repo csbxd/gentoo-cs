@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Git only trusts repositories owned by the current UID. The Flutter SDK is a
+# shared root:flutter checkout, so mark only that tree as safe for this command
+# and its Git subprocesses without modifying global user configuration.
+export GIT_CONFIG_COUNT=1
+export GIT_CONFIG_KEY_0=safe.directory
+export GIT_CONFIG_VALUE_0=/opt/flutter
+
+exec /opt/flutter/bin/flutter "$@"

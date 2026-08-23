@@ -1,0 +1,60 @@
+--- a/packages/flutter_tools/lib/src/flutter_cache.dart
++++ b/packages/flutter_tools/lib/src/flutter_cache.dart
+@@ -34,7 +34,7 @@ class FlutterCache extends Cache {
+     registerArtifact(MaterialFonts(this));
+     registerArtifact(GradleWrapper(this));
+     registerArtifact(AndroidGenSnapshotArtifacts(this, platform: platform));
+-    registerArtifact(AndroidInternalBuildArtifacts(this));
++    registerArtifact(AndroidInternalBuildArtifacts(this, platform: platform));
+     registerArtifact(IOSEngineArtifacts(this, platform: platform));
+     registerArtifact(FlutterWebSdk(this));
+     registerArtifact(FlutterEngineStamp(this, logger));
+@@ -386,6 +386,13 @@ class AndroidGenSnapshotArtifacts extends EngineCachedArtifact {
+ 
+   @override
+   List<List<String>> getBinaryDirs() {
++    // Flutter does not publish native Linux ARM64 Android gen_snapshot
++    // artifacts. This installation supplies matching binaries locally, so
++    // never cache the upstream Linux x64 host tools on an ARM64 host.
++    if (_platform.isLinux && cache.getHostPlatformArchName() == 'arm64') {
++      return const <List<String>>[];
++    }
++
+     return <List<String>>[
+       if (cache.includeAllPlatforms) ...<List<String>>[
+         ..._osxBinaryDirs,
+@@ -483,7 +490,10 @@ class AndroidMavenArtifacts extends ArtifactSet {
+ /// using the artifacts cached by [AndroidMavenArtifacts].
+ class AndroidInternalBuildArtifacts extends EngineCachedArtifact {
+-  AndroidInternalBuildArtifacts(Cache cache)
+-    : super('android-internal-build-artifacts', cache, DevelopmentArtifact.androidInternalBuild);
++  AndroidInternalBuildArtifacts(Cache cache, {required Platform platform})
++    : _platform = platform,
++      super('android-internal-build-artifacts', cache, DevelopmentArtifact.androidInternalBuild);
++
++  final Platform _platform;
+ 
+   @override
+   String get displayName => 'Android Internal Build Artifacts';
+@@ -494,5 +504,8 @@ class AndroidInternalBuildArtifacts extends EngineCachedArtifact {
+ 
+   @override
+   List<List<String>> getBinaryDirs() {
++    if (_platform.isLinux && cache.getHostPlatformArchName() == 'arm64') {
++      return _androidArm64BinaryDirs;
++    }
+     return _androidBinaryDirs;
+   }
+@@ -926,6 +939,12 @@ const _iosBinaryDirs = <List<String>>[
+   <String>['ios-release', 'ios-release/artifacts.zip'],
+ ];
+ 
++const _androidArm64BinaryDirs = <List<String>>[
++  <String>['android-arm64', 'android-arm64/artifacts.zip'],
++  <String>['android-arm64-profile', 'android-arm64-profile/artifacts.zip'],
++  <String>['android-arm64-release', 'android-arm64-release/artifacts.zip'],
++];
++
+ const _androidBinaryDirs = <List<String>>[
+   <String>['android-x86', 'android-x86/artifacts.zip'],
+   <String>['android-x64', 'android-x64/artifacts.zip'],

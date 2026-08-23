@@ -10,7 +10,6 @@
 		ARM64 Dart SDK and bootstraps host artifacts on first use.
 	</longdescription>
 	<use>
-		<flag name="examples">Install Flutter example projects</flag>
 		<flag name="linux-desktop">Install dependencies for Linux desktop builds</flag>
 	</use>
 	<upstream>

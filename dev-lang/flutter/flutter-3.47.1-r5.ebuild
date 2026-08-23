@@ -39,6 +39,10 @@ RDEPEND="
 "
 BDEPEND="dev-vcs/git"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-3.47.1-arm64-android-cache.patch"
+)
+
 DOC_CONTENTS="The Flutter SDK is installed in /opt/flutter and uses the native
 ARM64 system Dart SDK from dev-lang/dart-3.13.1.
 
@@ -55,6 +59,10 @@ engine artifacts are intentionally not dependencies of this package.
 
 The wrapper removes an unused x86-64 frontend snapshot mistakenly bundled in
 Flutter 3.47.1's Linux ARM64 engine archive after each invocation.
+
+On Linux ARM64, Flutter's cache is restricted to Android ARM64 target artifacts
+and locally supplied native Android gen_snapshot binaries. It never downloads
+the upstream Linux x64 Android host tools.
 
 Flutter writes into its own SDK tree. The tree is group-writable by the
 'flutter' group. Add trusted users to that group and start a new login session:

@@ -7,4 +7,11 @@ export GIT_CONFIG_COUNT=1
 export GIT_CONFIG_KEY_0=safe.directory
 export GIT_CONFIG_VALUE_0=/opt/flutter
 
-exec /opt/flutter/bin/flutter "$@"
+/opt/flutter/bin/flutter "$@"
+flutter_status=$?
+
+# Flutter 3.47.1's linux-arm64 engine archive contains an unused x86-64 copy.
+# The active frontend server comes from the ARM64 system Dart SDK.
+rm -f /opt/flutter/bin/cache/artifacts/engine/linux-arm64/frontend_server_aot.dart.snapshot 2>/dev/null || :
+
+exit "${flutter_status}"

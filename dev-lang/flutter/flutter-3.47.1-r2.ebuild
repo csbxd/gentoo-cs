@@ -66,10 +66,18 @@ src_prepare() {
 	rm -rf bin/cache || die
 
 	# git-r3 checkouts borrow objects from DISTDIR. Make the installed clone
-	# self-contained before Portage is allowed to clean the source cache.
+	# self-contained before Portage is allowed to clean the source cache. Keep
+	# only the pinned snapshot instead of copying the complete stable history.
 	git checkout -B stable "${FLUTTER_COMMIT}" || die
+	local ref
+	while read -r ref; do
+		[[ ${ref} == refs/heads/stable ]] || git update-ref -d "${ref}" || die
+	done < <(git for-each-ref --format='%(refname)')
+	printf '%s\n' "${FLUTTER_COMMIT}" > .git/shallow || die
+	git reflog expire --expire=now --all || die
 	git repack -a -d || die
 	rm -f .git/objects/info/alternates || die
+	git prune-packed || die
 	git fsck --no-dangling || die
 
 	git remote remove origin >/dev/null 2>&1 || :

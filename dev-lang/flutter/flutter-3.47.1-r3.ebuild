@@ -83,6 +83,7 @@ src_prepare() {
 	git remote remove origin >/dev/null 2>&1 || :
 	git remote add origin "${EGIT_REPO_URI}" || die
 	git update-ref refs/remotes/origin/stable "${FLUTTER_COMMIT}" || die
+	git update-ref "refs/tags/${PV}" "${FLUTTER_COMMIT}" || die
 	git config branch.stable.remote origin || die
 	git config branch.stable.merge refs/heads/stable || die
 }

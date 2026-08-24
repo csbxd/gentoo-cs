@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<longdescription lang="en">
+		Tencent Meeting video conferencing client.  On ARM64 systems using
+		16 KiB kernel pages, this package carries Fedora's Chromium 87
+		PartitionAlloc backport for Qt5 WebEngine and repacks libImSDK so the
+		client can run natively with working web login and host media devices.
+	</longdescription>
+	<longdescription lang="zh">
+		腾讯会议Linux客户端。对于采用16 KiB内核页的ARM64系统，本包集成
+		Fedora为Qt5 WebEngine移植的Chromium 87 PartitionAlloc修复，并重排
+		libImSDK，使客户端能够原生运行、使用网页扫码登录及宿主媒体设备。
+	</longdescription>
+</pkgmetadata>

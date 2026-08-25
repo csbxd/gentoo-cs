@@ -137,6 +137,15 @@ src_prepare() {
 	rm -r opt/${PN}/plugins/xcbglintegrations || die
 
 	default
+
+	if use arm64; then
+		# Wemeet clears struct v4l2_buffer before VIDIOC_DQBUF but does not
+		# restore its MMAP memory type.  v4l2loopback correctly rejects the
+		# invalid request with EINVAL, leaving virtual cameras black.
+		"${EPYTHON}" "${FILESDIR}/patch-libxcast-v4l2.py" \
+			"opt/${PN}/lib/libxcast.so" "${T}/libxcast.so" || die
+		mv "${T}/libxcast.so" "opt/${PN}/lib/libxcast.so" || die
+	fi
 }
 
 src_install() {

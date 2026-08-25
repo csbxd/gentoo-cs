@@ -5,7 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{11..15} )
 
-inherit desktop python-any-r1 unpacker xdg
+inherit desktop python-any-r1 toolchain-funcs unpacker xdg
 
 DESCRIPTION="Wemeet - Tencent Video Conferencing"
 HOMEPAGE="https://meeting.tencent.com/"
@@ -148,8 +148,23 @@ src_prepare() {
 	fi
 }
 
+src_compile() {
+	if use arm64; then
+		$(tc-getCC) ${CFLAGS} ${CPPFLAGS} -fPIC -shared \
+			-Wl,-soname,libwemeet-camera-compat.so \
+			-Wl,-rpath,'$ORIGIN' -Wl,-z,defs ${LDFLAGS} \
+			-o "${T}/libwemeet-camera-compat.so" \
+			"${FILESDIR}/wemeet-camera-compat.c" \
+			-L"opt/${PN}/lib" -l:libyuv.so -ldl -pthread || die
+	fi
+}
+
 src_install() {
 	local f
+
+	if use arm64; then
+		cp "${T}/libwemeet-camera-compat.so" "opt/${PN}/lib/" || die
+	fi
 
 	# Fix RPATHs to ensure the bundled application libraries can be found.
 	while IFS= read -r -d '' f; do
@@ -163,6 +178,9 @@ src_install() {
 	done < <(find "opt/${PN}/lib" -type f -print0)
 
 	if use arm64; then
+		patchelf --add-needed libwemeet-camera-compat.so \
+			"opt/${PN}/lib/libxcast.so" || die
+
 		# The upstream ARM64 libImSDK has 4 KiB-congruent PT_LOAD segments and
 		# cannot be mapped by a 16 KiB kernel.  Repack after patchelf so the
 		# final installed ELF, including its new RUNPATH segment, is congruent.

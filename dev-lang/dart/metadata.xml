@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<longdescription lang="en">
+		Official prebuilt Dart SDK for native Linux ARM64 hosts, retained at
+		the engine-matched version required by the Flutter package in this
+		repository.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">dart-lang/sdk</remote-id>
+		<bugs-to>https://github.com/dart-lang/sdk/issues</bugs-to>
+		<doc lang="en">https://dart.dev/guides</doc>
+	</upstream>
+</pkgmetadata>

@@ -5,4 +5,7 @@
 		<email>r27153733@gmail.com</email>
 		<name>不插电</name>
 	</maintainer>
+	<upstream>
+		<remote-id type="github">csbxd/electron11-16k</remote-id>
+	</upstream>
 </pkgmetadata>

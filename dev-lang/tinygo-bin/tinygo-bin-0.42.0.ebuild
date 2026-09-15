@@ -16,6 +16,7 @@ REQUIRED_USE="elibc_glibc"
 RESTRICT="strip"
 
 RDEPEND="
+	!dev-lang/tinygo
 	>=dev-lang/go-1.24
 	<dev-lang/go-1.28
 	sys-devel/gcc

@@ -1,0 +1,16 @@
+Backport of https://github.com/WebAssembly/binaryen/pull/8559
+From upstream commit 6a78bf0af57dbff8f9d6a77b2527eb0ebb5b73e9
+
+--- a/third_party/llvm-project/Path.cpp
++++ b/third_party/llvm-project/Path.cpp
+@@ -1081,2 +1081,10 @@
+ #endif
++#else
++// Stub out directory_iterator_destruct, which at least GCC 16 instantiates from
++// llvm/Support/FileSystem.h even though binaryen never uses it:
++namespace llvm { namespace sys { namespace fs { namespace detail {
++std::error_code directory_iterator_destruct(DirIterState &) {
++  return std::error_code();
++}
++}}}}
+ #endif

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gmail.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<longdescription lang="en">
+		LLGo is an LLVM-based Go compiler with direct interoperability with
+		C, C++, and Python. This package builds against the system LLVM
+		toolchain and includes the runtime sources and target definitions.
+	</longdescription>
+	<use>
+		<flag name="lldb">Install the matching LLVM debugger for llgo lldb</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">xgo-dev/llgo</remote-id>
+	</upstream>
+</pkgmetadata>

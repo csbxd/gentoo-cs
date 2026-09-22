@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>r27153733@gamil.com</email>
+		<name>不插电</name>
+	</maintainer>
+	<longdescription lang="en">
+		OpenAI's official Linux desktop application for ChatGPT and Codex. It
+		provides a graphical workspace for projects, local files, and coding
+		agents. The Linux build is distributed as a proprietary prebuilt Electron
+		application and is currently a preview.
+	</longdescription>
+	<longdescription lang="zh">
+		OpenAI 官方 Linux 桌面应用，集成 ChatGPT 和 Codex，为项目、本地文件及编程
+		智能体提供图形化工作区。Linux 版本以专有预编译 Electron 应用发布，目前为预览版。
+	</longdescription>
+	<use>
+		<flag name="apparmor">安装上游 AppArmor 配置，允许渲染器使用用户命名空间</flag>
+		<flag name="egl">使用 EGL 图形渲染</flag>
+		<flag name="wayland">在 Wayland 会话中启用 Wayland 输入和渲染选项</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">openai/codex</remote-id>
+		<doc lang="en">https://developers.openai.com/codex/app</doc>
+	</upstream>
+</pkgmetadata>

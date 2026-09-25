@@ -72,26 +72,18 @@ src_install() {
 	# setuid chrome-sandbox helper.
 	pax-mark m "${ED}${APP_DESTDIR}/ChatGPT"
 
-	# codex-launcher resolves its own path and then executes ChatGPT next to it.
+	# Apply USE flags in the shared launcher for both desktop and CLI starts.
+	# The bundled runtime ignores --ozone-platform-hint=auto and defaults to X11.
+	sed -e "s|@WAYLAND@|$(usex wayland yes no)|g" \
+		-e "s|@EGL@|$(usex egl yes no)|g" \
+		"${FILESDIR}/codex-launcher" > "${T}/codex-launcher" || die
+	exeinto "${APP_DESTDIR}"
+	doexe "${T}/codex-launcher"
+
 	dosym -r "${APP_DESTDIR}/codex-launcher" "/usr/bin/${MY_PN}"
 	dosym -r "${APP_DESTDIR}/codex-launcher" "/usr/bin/${PN%-bin}"
 
-	local exec_flags=()
-	if use wayland; then
-		exec_flags+=(
-			--ozone-platform-hint=auto
-			--enable-wayland-ime
-			--wayland-text-input-version=3
-		)
-	fi
-	if use egl; then
-		exec_flags+=( --use-gl=egl )
-	fi
-
-	sed -e "s|^Exec=${MY_PN}|Exec=${MY_PN} ${exec_flags[*]}|" \
-		"usr/share/applications/${MY_PN}.desktop" \
-		> "${T}/${PN%-bin}.desktop" || die
-	domenu "${T}/${PN%-bin}.desktop"
+	newmenu "usr/share/applications/${MY_PN}.desktop" "${PN%-bin}.desktop"
 
 	newicon -s 1024 "usr/share/pixmaps/${MY_PN}.png" "${MY_PN}.png"
 

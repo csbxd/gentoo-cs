@@ -1,0 +1,18 @@
+#!/bin/sh
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# Select native Wayland explicitly: the bundled runtime defaults to X11 even
+# with --ozone-platform-hint=auto. Keep X11 sessions working with USE=wayland.
+if [ "@WAYLAND@" = yes ] &&
+	{ [ "${XDG_SESSION_TYPE-}" = wayland ] || [ -n "${WAYLAND_DISPLAY-}" ]; }; then
+	set -- --ozone-platform=wayland --enable-wayland-ime \
+		--wayland-text-input-version=3 "$@"
+fi
+
+if [ "@EGL@" = yes ]; then
+	set -- --use-gl=egl "$@"
+fi
+
+# Defaults precede user arguments so explicit runtime options take precedence.
+exec "$(dirname "$(readlink -f "$0")")/ChatGPT" "$@"

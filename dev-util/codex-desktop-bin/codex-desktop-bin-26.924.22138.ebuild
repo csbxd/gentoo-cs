@@ -35,6 +35,7 @@ RDEPEND="
 	dev-libs/openssl:0/3
 	media-gfx/graphite2
 	media-libs/alsa-lib
+	media-libs/libcanberra-gtk3
 	media-libs/libglvnd
 	media-libs/mesa[gbm(+)]
 	net-print/cups

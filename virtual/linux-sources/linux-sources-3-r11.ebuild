@@ -25,5 +25,6 @@ RDEPEND="
 		sys-kernel/linux-next
 		sys-kernel/asahi-sources
 		sys-kernel/gentoo-kernel-modprep
+		sys-kernel/ophub-kernel
 		sys-kernel/ophub-kernel-bin
 	)"

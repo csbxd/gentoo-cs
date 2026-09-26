@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    Builds the ophub ARM64 kernel from a pinned source commit and stable
+    configuration. Includes kernel modules, board DTBs and a prepared build tree
+    for external modules. Uses an independent kernel release suffix and stages
+    boot artifacts outside /boot for explicit board-specific deployment.
+  </longdescription>
+  <use>
+    <flag name="debug">Build DWARF5 and BTF debug information and retain vmlinux for external-module BTF generation</flag>
+  </use>
+  <upstream><remote-id type="github">ophub/linux-6.18.y</remote-id></upstream>
+</pkgmetadata>

@@ -1,0 +1,19 @@
+{
+  "channel": "kernel_stable",
+  "upstream": "https://github.com/ophub/kernel",
+  "original_asset_id": 580626792,
+  "original_asset_created_at": "2026-09-22T05:20:47Z",
+  "original_filename": "6.18.53.tar.gz",
+  "original_size": 122846477,
+  "sha256": "269dd8ded019f829723968a236bac40335dc9488aac8f22cf1afd5b9f3a20bb7",
+  "kernel_release": "6.18.53-ophub",
+  "warning": "Upstream replaces this filename; only this archived build is accepted.",
+  "inner_sha256": {
+    "boot-6.18.53-ophub.tar.gz": "9503f570b6c48eb7fb74f0dd609d911382344eddb373d6f2d7763ce2f6270012",
+    "dtb-allwinner-6.18.53-ophub.tar.gz": "5902e6d38370022370e25707b79d9abf5cf0e7fea048b55afca1e4e1498bd9af",
+    "dtb-amlogic-6.18.53-ophub.tar.gz": "f66f9f48157f31e9d9aa4b89049e0cbdacd2168c9bafa8dc9b8d60646ba97462",
+    "dtb-rockchip-6.18.53-ophub.tar.gz": "d1ba6f22d3356741e1533ad9e14cddb901b2281402220a901c5b567bb273258b",
+    "header-6.18.53-ophub.tar.gz": "0d6e0dc746c62f7dd26bcba0a88ce2bbb0a902cc706cb8db680b143ffdb5cacc",
+    "modules-6.18.53-ophub.tar.gz": "8cac7b6271a94a623a39a97fb5701f9e9e782784600d7e87870378671e2ef235"
+  }
+}

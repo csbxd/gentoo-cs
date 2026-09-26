@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    Imports an audited ophub ARM64 binary release together with its matching
+    module build tree and device trees. Versioned artifacts are staged outside
+    /boot; board-specific bootloader configuration is managed separately.
+    The dated distfile must be supplied from an archive because upstream replaces
+    same-version release assets. This is not a full kernel source package.
+  </longdescription>
+  <upstream><remote-id type="github">ophub/kernel</remote-id></upstream>
+</pkgmetadata>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <longdescription lang="en">
+    ARM64 overlay of Gentoo's linux-sources virtual, adding ophub-kernel-bin
+    as a prepared module-build provider for DKMS while retaining all upstream
+    providers. Keep the alternatives synchronized with Gentoo.
+  </longdescription>
+  <use>
+    <flag name="firmware">Pull in sys-kernel/linux-firmware</flag>
+  </use>
+</pkgmetadata>

@@ -4,11 +4,12 @@
 source tree. It uses immutable source and configuration commits with Manifest
 checksums, rather than a moving branch or a published binary kernel archive.
 
-The initial version is 6.18.54:
+The initial source version is 6.18.54:
 
 - Sources: https://github.com/ophub/linux-6.18.y/commit/4e68e1932480960f2f4a95e80e424b34d0737dfb
 - Stable configuration: https://github.com/ophub/kernel/blob/35527918391e697f994d9efa02948d4308a7a766/kernel-config/release/stable/config-6.18
-- Kernel release: `6.18.54-ophub-gentoo-r0`.
+- Initial kernel release: `6.18.54-ophub-gentoo-r0`, slot `6.18.54`.
+- Revision r1: `6.18.54-ophub-gentoo-r1`, independent slot `6.18.54-r1`.
 - Architecture: native ARM64 builds. Cross-compilation is not yet supported.
 
 This is a local build of ophub sources, not a byte-identical reproduction of
@@ -40,6 +41,39 @@ certificate paths. `CONFIG_MODULES=y` is required. `USE=debug` controls DWARF5 a
 BTF; they are disabled by default to reduce build space and memory. Configs and
 user patches must remain compatible with these settings. `USE=test FEATURES=test`
 builds an external module against the exported headers and checks its release.
+
+### BTF and bpftune custom configuration (r1)
+
+Use a complete savedconfig at
+`/etc/portage/savedconfig/sys-kernel/ophub-kernel-6.18.54-r1`, and add a
+version-specific package.use entry:
+
+```text
+=sys-kernel/ophub-kernel-6.18.54-r1 debug savedconfig test
+```
+
+Merge the supplied `bpftune.config` fragment into that full config. It enables
+DWARF5, kernel/module BTF and FUNCTION_TRACER. `olddefconfig` selects ARM64's
+applicable dynamic ftrace/direct-call dependencies. The fragment is not a
+complete savedconfig, and it is not applied automatically to other builds.
+
+With USE=debug, r1 normalizes the DWARF choice and disables split/reduced debug
+information, which would otherwise prevent BTF. Configure fails if the required
+DWARF5/BTF settings do not survive olddefconfig. USE=-debug still disables BTF;
+changing only savedconfig is insufficient.
+
+```sh
+emerge --ask sys-kernel/ophub-kernel:6.18.54-r1
+```
+
+Keep `sys-kernel/ophub-kernel:6.18.54` selected until the old r0 kernel is no
+longer needed. From r1 onward, slots include the ebuild revision, so installing
+r1 preserves r0's module and header directories. Scope USE changes to r1 to
+avoid a --newuse rebuild of the running r0 kernel.
+
+This prepares BPF capabilities; bpftune support must still be checked with
+`bpftune -S` after building and booting the new kernel. No daemon is enabled by
+the kernel package.
 
 The upstream config covers many ARM64 boards, so a full build is substantial.
 The tested default build used about 3.4 GiB for the work tree and 307 MiB for
@@ -85,4 +119,5 @@ modules. A root Btrfs snapshot does not include a separate /boot partition.
 Rebuilding the same ebuild with a different config still uses the same release:
 plan a reboot and rebuild external modules; modules already in memory do not
 change when their files are replaced. For parallel custom configurations, use a
-separate ebuild revision. Do not unmerge a running or recovery kernel.
+separate ebuild revision with its own slot (implemented from r1 onward).
+Do not unmerge a running or recovery kernel.

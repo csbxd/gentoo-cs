@@ -37,6 +37,37 @@ sys-kernel/ophub-kernel savedconfig
 选项，具体见[包内说明](../sys-kernel/ophub-kernel/files/README.md)。需要 DWARF5/BTF
 时启用 `debug`；这会增加构建空间和依赖。
 
+## bpftune 自定义配置（r1）
+
+`6.18.54-r1` 使用独立 slot `6.18.54-r1`，kernel release 为
+`6.18.54-ophub-gentoo-r1`，可保留已安装的 r0（slot `6.18.54`）。
+不要把当前 r0 的全局 USE 改成 debug 后直接覆盖运行中的构建。
+
+按版本配置 `/etc/portage/package.use/ophub-kernel`：
+
+```text
+=sys-kernel/ophub-kernel-6.18.54 test -debug -savedconfig
+=sys-kernel/ophub-kernel-6.18.54-r1 test debug savedconfig
+```
+
+为 r1 准备完整配置文件：
+`/etc/portage/savedconfig/sys-kernel/ophub-kernel-6.18.54-r1`。
+可以从已验证的完整配置复制，并合入包内
+[`bpftune.config`](../sys-kernel/ophub-kernel/files/bpftune.config) 片段。
+该片段不能单独作为完整 savedconfig，也不会自动用于其他构建。
+
+核心设置为 DWARF5、内核/模块 BTF 及 FUNCTION_TRACER。实际 `olddefconfig` 会选中
+ARM64 上相应的 DYNAMIC_FTRACE、WITH_ARGS、WITH_CALL_OPS 和 WITH_DIRECT_CALLS。
+`USE=debug` 必须开启，否则 ebuild 会关闭 BTF。r1 会检查最终 BTF 设置，缺失时在
+configure 阶段报错。构建命令为：
+
+```sh
+emerge --ask sys-kernel/ophub-kernel:6.18.54-r1
+```
+
+这只是构建配置支持；需完成新内核编译、安装、启动后再用 `bpftune -S` 验证。
+配置检查通过不等于已经启用运行内核的 BTF，也不会自动开启 bpftune 服务。
+
 ## Headers 和 DKMS
 
 ```sh
@@ -75,4 +106,5 @@ TPM312 应将新 Image 与 `dtbs/rockchip/rk3399-tpm312.dtb` 准备到独立启�
 
 修订相同版本的打包方式时增加 ebuild revision；revision 会进入 kernel release。
 修改 savedconfig 后重装同一 ebuild 仍会使用相同 release，需要重新构建外部模块并
-安排重启。若需要让不同自定义配置并存，应使用不同的 ebuild revision。
+安排重启。若需要让不同自定义配置并存，应使用不同 revision 及独立 slot；
+从 r1 起 slot 使用包含 revision 的 PVR，r0 仍保留原 slot。

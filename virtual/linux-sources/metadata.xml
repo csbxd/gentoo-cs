@@ -6,8 +6,8 @@
     <name>csbxd</name>
   </maintainer>
   <longdescription lang="en">
-    ARM64 overlay of Gentoo's linux-sources virtual, adding ophub-kernel-bin
-    as a prepared module-build provider for DKMS while retaining all upstream
+    ARM64 overlay of Gentoo's linux-sources virtual, adding ophub-kernel and
+    ophub-kernel-bin as prepared module-build providers for DKMS while retaining all upstream
     providers. Keep the alternatives synchronized with Gentoo.
   </longdescription>
   <use>

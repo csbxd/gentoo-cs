@@ -84,9 +84,18 @@ src_install() {
 	dosym -r "${APP_DESTDIR}/codex-launcher" "/usr/bin/${MY_PN}"
 	dosym -r "${APP_DESTDIR}/codex-launcher" "/usr/bin/${PN%-bin}"
 
-	newmenu "usr/share/applications/${MY_PN}.desktop" "${PN%-bin}.desktop"
+	# Match the upstream Wayland app_id and X11 window class.
+	sed "/^\[Desktop Entry\]$/a StartupWMClass=${MY_PN}" \
+		"usr/share/applications/${MY_PN}.desktop" > "${T}/${MY_PN}.desktop" || die
+	domenu "${T}/${MY_PN}.desktop"
 
-	newicon -s 1024 "usr/share/pixmaps/${MY_PN}.png" "${MY_PN}.png"
+	# Keep existing shortcuts working without a second application-menu entry.
+	sed '/^\[Desktop Entry\]$/a NoDisplay=true' \
+		"${T}/${MY_PN}.desktop" > "${T}/${PN%-bin}.desktop" || die
+	domenu "${T}/${PN%-bin}.desktop"
+
+	# The stock hicolor theme does not index a 1024x1024/apps directory.
+	newicon "usr/share/pixmaps/${MY_PN}.png" "${MY_PN}.png"
 
 	if use apparmor; then
 		insinto /etc/apparmor.d

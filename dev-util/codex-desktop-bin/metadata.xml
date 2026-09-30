@@ -10,10 +10,13 @@
 		provides a graphical workspace for projects, local files, and coding
 		agents. The Linux build is distributed as a proprietary prebuilt Electron
 		application and is currently a preview.
+		The live 9999 ebuild retrieves the latest official Linux release at build
+		time, verifying its repository signature and package checksum.
 	</longdescription>
 	<longdescription lang="zh">
 		OpenAI 官方 Linux 桌面应用，集成 ChatGPT 和 Codex，为项目、本地文件及编程
 		智能体提供图形化工作区。Linux 版本以专有预编译 Electron 应用发布，目前为预览版。
+		9999 版本在构建时获取最新官方 Linux 发行版，并校验软件源签名及安装包哈希。
 	</longdescription>
 	<use>
 		<flag name="apparmor">安装上游 AppArmor 配置，允许渲染器使用用户命名空间</flag>

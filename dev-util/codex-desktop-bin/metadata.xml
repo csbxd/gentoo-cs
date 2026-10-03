@@ -22,6 +22,7 @@
 		<flag name="apparmor">安装上游 AppArmor 配置，允许渲染器使用用户命名空间</flag>
 		<flag name="egl">使用 EGL 图形渲染</flag>
 		<flag name="wayland">在 Wayland 会话中启用 Wayland 输入和渲染选项</flag>
+		<flag name="workspace">为 ARM64 打包原生工作空间运行时，供应用内安装与修复使用</flag>
 	</use>
 	<upstream>
 		<remote-id type="github">openai/codex</remote-id>

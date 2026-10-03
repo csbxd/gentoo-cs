@@ -3,20 +3,28 @@
 
 EAPI=8
 
-inherit desktop optfeature pax-utils unpacker xdg
+PYTHON_COMPAT=( python3_{11..15} )
+inherit desktop optfeature pax-utils python-any-r1 toolchain-funcs unpacker xdg
 
 MY_PN="chatgpt"
 OAI_REPO="https://persistent.oaistatic.com/codex-app-prod/linux/deb"
+WORKSPACE_PYTHON="cpython-3.12.15+20261001-aarch64-unknown-linux-gnu-install_only_stripped"
+JXR_COMMIT="f7521879862b9085318e814c6157490dd9dbbdb4"
 
 DESCRIPTION="OpenAI Codex desktop application for Linux"
 HOMEPAGE="https://developers.openai.com/codex/app"
+SRC_URI="arm64? ( workspace? (
+	https://github.com/astral-sh/python-build-standalone/releases/download/20261001/${WORKSPACE_PYTHON}.tar.gz
+	https://github.com/4creators/jxrlib/archive/${JXR_COMMIT}.tar.gz -> codex-jxrlib-${JXR_COMMIT}.tar.gz
+) )"
+
 S="${WORKDIR}"
 
-LICENSE="all-rights-reserved MIT"
+LICENSE="all-rights-reserved BSD-2 MIT"
 SLOT="0"
 KEYWORDS=""
 PROPERTIES="live"
-IUSE="apparmor egl wayland"
+IUSE="apparmor egl wayland +workspace"
 RESTRICT="bindist mirror strip"
 
 RDEPEND="
@@ -54,12 +62,19 @@ RDEPEND="
 	x11-libs/pango
 	x11-misc/xdg-utils
 	apparmor? ( sys-apps/apparmor )
+	arm64? ( workspace? (
+		app-office/libreoffice
+		app-text/poppler[utils]
+		dev-vcs/git
+		media-libs/libheif[tools]
+	) )
 "
 
 BDEPEND="
 	app-arch/xz-utils
 	app-crypt/gnupg
 	net-misc/curl
+	${PYTHON_DEPS}
 "
 QA_PREBUILT="*"
 
@@ -168,11 +183,55 @@ src_unpack() {
 		mv -fT "${download}" "${cache_file}" || die
 	fi
 	unpack_deb "${cache_file}"
+
+	if [[ ${ARCH} == arm64 ]] && use workspace; then
+		unpack ${A}
+		"${PYTHON}" "${FILESDIR}/arm64-workspace.py" prepare \
+			--resources "${WORKDIR}/${APP_SRCDIR}/resources" \
+			--python "${WORKDIR}/python" --cache "${cache_dir}" \
+			--output "${WORKDIR}/workspace-runtime" \
+			|| die "Cannot prepare native ARM64 workspace dependencies"
+	fi
+}
+
+src_prepare() {
+	default
+	if [[ ${ARCH} == arm64 ]] && use workspace; then
+		# Keep the existing download, checksum, extraction, repair and activation
+		# flow. Use the packaged runtime when upstream has no ARM64 release.
+		"${PYTHON}" "${FILESDIR}/patch-workspace-installer.py" \
+			"${APP_SRCDIR}/resources/app.asar" || die "Cannot patch workspace installer"
+		sed -e 's/^\tar rvu/\t$(AR) rvu/' \
+			-e 's/^\tranlib /\t$(RANLIB) /' \
+			-e 's/$(LIBS)$/$(LIBS) $(LDFLAGS)/' \
+			-i "jxrlib-${JXR_COMMIT}/Makefile" || die
+		# Modern GCC requires the declaration of wcslen().
+		sed -i '/^#include <limits.h>/a#include <wchar.h>' \
+			"jxrlib-${JXR_COMMIT}/jxrgluelib/JXRGlueJxr.c" || die
+	fi
+}
+
+src_compile() {
+	if [[ ${ARCH} == arm64 ]] && use workspace; then
+		emake -C "jxrlib-${JXR_COMMIT}" CC="$(tc-getCC)" \
+			AR="$(tc-getAR)" RANLIB="$(tc-getRANLIB)" \
+			CFLAGS="${CFLAGS} -std=gnu89 -I. -Icommon/include -Iimage/sys -D__ANSI__ -DDISABLE_PERF_MEASUREMENT" \
+			LDFLAGS="${LDFLAGS}"
+		"${PYTHON}" "${FILESDIR}/arm64-workspace.py" finish \
+			--resources "${WORKDIR}/${APP_SRCDIR}/resources" \
+			--jxr "${WORKDIR}/jxrlib-${JXR_COMMIT}" \
+			--output "${WORKDIR}/workspace-runtime" \
+			|| die "Cannot package native ARM64 workspace dependencies"
+	fi
 }
 
 src_install() {
 	dodir "${APP_DESTDIR}"
 	cp -a "${APP_SRCDIR}/." "${ED}${APP_DESTDIR}/" || die
+	if [[ ${ARCH} == arm64 ]] && use workspace; then
+		insinto "${APP_DESTDIR}/resources/gentoo-workspace"
+		doins workspace-runtime/{manifest.json,gentoo-arm64-workspace.tar.xz}
+	fi
 
 	# The Electron build uses unprivileged user namespaces and ships no
 	# setuid chrome-sandbox helper.
@@ -214,6 +273,10 @@ pkg_postinst() {
 
 	einfo "The desktop application is available as 'chatgpt' and 'codex-desktop'."
 	einfo "This preview requires unprivileged user namespaces for its renderer sandbox."
+	if [[ ${ARCH} == arm64 ]] && use workspace; then
+		einfo "Native ARM64 workspace dependencies are included as a Gentoo fallback."
+		einfo "Restart the app, then use Settings > Workspace > Reset and install workspace."
+	fi
 
 	optfeature "repository operations from Codex" dev-vcs/git
 	optfeature "system tray icon" dev-libs/libayatana-appindicator

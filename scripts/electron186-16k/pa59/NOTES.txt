@@ -1,0 +1,67 @@
+Chromium 59 / Electron 1.8.6 PartitionAlloc 16 KiB backport
+
+Files:
+- chromium59-linux-arm64-16k-pa.patch: Chromium + corresponding PDFium patch.
+- sources.json / fetch_sources.py: pinned small source set and SHA-256 hashes.
+- make_patch.py: generate patched files and the reviewable diff.
+- allocator_smoke.cc / run_smoke.py: native standalone allocator comparison.
+- result-{chromium,pdfium}-{original,patched}-{0,1}.txt: run results.
+- compile-*.log: compiler output.
+
+Sources:
+https://github.com/csbxd/electron11-16k
+https://chromium-review.googlesource.com/c/chromium/src/+/3545665
+https://github.com/chromium/chromium/tree/59.0.3071.115/base/allocator/partition_allocator
+https://github.com/chromium/pdfium/tree/e0b592236db902e3e8cbca7ec64f8e2b192e1935/third_party/base/allocator/partition_allocator
+
+Design:
+Chromium 59 uses PA constants in template parameters, array lengths, inline
+pointer arithmetic and namespace-scope static_assert. Replacing its constants
+with runtime functions would require a substantially larger port than the
+Chromium 87 version of the reference project. This backport instead changes
+Linux ARM64's fixed allocation/system granule from 4 KiB to 16 KiB and its
+partition page from 16 KiB to 64 KiB. Other architectures/platforms keep the
+original values. The 2 MiB super page and 32-byte metadata entries are retained.
+This provides 4 system pages per partition page, and 32 partition pages per
+super page. The first partition page retains a guard/metadata/guard/guard layout.
+32 metadata entries * 32 bytes = 1024 bytes, fitting inside the 16 KiB metadata
+page. The maximum regular span retains 16 system pages, within the uint8_t
+page-count field. All original layout static_assert expressions compile.
+
+16 KiB requests/protection/discard ranges are also valid on a 4 KiB kernel;
+that compatibility follows from the granularity relationship but has not been
+run on a separate 4 KiB kernel here. This is not a 64 KiB-kernel backport.
+All PA consumers must be recompiled because pointer arithmetic for metadata
+and slot-span layout is in headers. Do not intermix old and new PA consumers.
+
+Validation (native aarch64 kernel, getconf PAGESIZE = 16384):
+- git apply --check against pinned originals: PASS.
+- Real Chromium and PDFium allocator sources compiled with g++ -std=c++14 -O2.
+- Original Chromium: abort in mprotect CHECK, both DCHECK off and on.
+- Original PDFium: same abort, both DCHECK off and on.
+- Patched Chromium: PASS, both DCHECK off and on.
+- Patched PDFium: PASS, both DCHECK off and on.
+- Smoke covers every reachable generic bucket class (119 release / 116 debug),
+  sizes 0 through 4 MiB including direct maps, realloc with preservation checks,
+  partial-span discard and empty-span purge, recommit/reuse, and 100000 small
+  allocations freed in shuffled order with full byte-preservation checks.
+
+Standalone harness boundary:
+The allocator, page allocator, ASLR generator, spin lock, structures, bit
+operations and layout static_assert are genuine pinned upstream sources.
+Only logging is replaced by a small dependency shim preserving CHECK/DCHECK
+failure semantics; Chromium's unused Windows-version header is empty on POSIX.
+The debug configuration uses actual PA cookies and validates them. The shim is
+only for this isolated smoke and is not part of the source patch or production
+build. Compiler warnings are pre-existing aggregate-zero-initializer warnings
+and unused debug-only variables when DCHECK is disabled.
+
+Reproduce locally on a native 16 KiB ARM64 kernel:
+  python3 fetch_sources.py
+  python3 make_patch.py
+  python3 run_smoke.py
+
+This proves the PA backport compiles and works in isolation on the real target
+page size. It does not prove a complete Electron build or Xunlei application
+integration. V8 snapshot page-size compatibility and any other Chromium 59
+kernel-page assumptions must be addressed and tested by the main build.

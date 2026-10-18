@@ -1,0 +1,14 @@
+diff --git a/third_party/node/node.py b/third_party/node/node.py
+--- a/third_party/node/node.py
++++ b/third_party/node/node.py
+@@ -10,6 +10,10 @@
+ 
+ 
+ def GetBinaryPath():
++  # Chromium 59 only vendors x64 Node binaries. Use the native build host's
++  # packaged Node for resource generation on Linux ARM64.
++  if platform.system() == 'Linux' and platform.machine() in ('aarch64', 'arm64'):
++    return '/usr/bin/node'
+   return os_path.join(os_path.dirname(__file__), *{
+     'Darwin': ('mac', 'node-darwin-x64', 'bin', 'node'),
+     'Linux': ('linux', 'node-linux-x64', 'bin', 'node'),

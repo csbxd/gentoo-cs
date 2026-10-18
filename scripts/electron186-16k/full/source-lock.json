@@ -1,0 +1,24 @@
+{
+  "referenceProject": "https://github.com/csbxd/electron11-16k",
+  "electronTag": "v1.8.6",
+  "electronCommit": "43650d40534a3ece1fc7b28bd6603bfc7cf8fc43",
+  "submodules": {
+    "vendor/boto": "f7574aa6cc2c819430c1f05e9a1a1a666ef8169b",
+    "vendor/breakpad": "82f0452e6b687b3c1e14e08d172b2f3fb79ae91a",
+    "vendor/crashpad": "f7c320766756a8aaa45ccbcff2945053d9f7e109",
+    "vendor/depot_tools": "4fa73b8ca6899bc69577932b80145a6bf07e4424",
+    "vendor/gyp": "549e55a22765ccf99e46b419b2dff6338bcac64a",
+    "vendor/libchromiumcontent": "d56634abfa9f1068b1cb4788510b4c23b14e8c0a",
+    "vendor/native_mate": "bf92fa88b735b8c9ff951e6ef78a531bd10e8778",
+    "vendor/node": "2586ef1eb5f5f53da2c1852efb47c20dc8888534",
+    "vendor/pdf_viewer": "beb36874a6b61d7a18b92bf7dcd1f0661e4c59cf",
+    "vendor/requests": "e4d59bedfd3c7f4f254f4f5d036587bcd8152458"
+  },
+  "chromiumVersion": "59.0.3071.115",
+  "chromiumArchiveURL": "https://commondatastorage.googleapis.com/chromium-browser-official/chromium-59.0.3071.115.tar.xz",
+  "chromiumArchiveSHA256": "37cbc9955ae3b25cd4e9851a82ea97a0035021cc90658902938ad1c20f263170",
+  "chromiumArchiveMD5": "249b4ce6844d5e2424967287c638c55c",
+  "pageSize": 16384,
+  "targetCPU": "arm64",
+  "ubuntuImage": "docker.io/library/ubuntu@sha256:152dc042452c496007f07ca9127571cb9c29697f42acbfad72324b2bb2e43c98"
+}

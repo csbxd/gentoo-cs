@@ -1,0 +1,53 @@
+Build portability fixes for the pinned Electron 1.8.6 / Chromium 59 source.
+These supplement Electron's original libchromiumcontent patches and the 16 KiB
+PartitionAlloc patch. prepare-chromium.py applies them in numeric order.
+
+001-native-node.patch
+Chromium 59's resource generator hard-codes a vendored Linux x64 Node binary.
+That binary is absent from the release source archive and cannot run on native
+ARM64. Select /usr/bin/node only for Linux aarch64/arm64 builds. The Ubuntu
+18.04 build container's native Node 8.10.0 was executed successfully on the real
+16 KiB kernel before use; its resource-generation tasks subsequently passed.
+
+002-linux-dmabuf-uapi.patch
+client_native_pixmap_dmabuf.cc defines local DMA-BUF structs/macros only for
+kernel headers older than 4.6, includes the canonical Linux UAPI otherwise, but
+unconditionally uses the local names in its code. Use canonical dma_buf_sync /
+DMA_BUF_* names consistently, retaining the fallback definitions on old headers.
+This keeps the same public ioctl number and 64-bit flags structure layout.
+
+Restored dependency
+The Linux release source archive omits third_party/freetype/src, but PDFium
+still includes its private Adobe glyph-name table. source-deps.json and
+prepare-chromium.py restore the complete FreeType tree pinned in the source's
+DEPS (5a3490e054bda8a318ebde482c7fb30213cab3d9), using the official Gitiles
+archive and a recorded SHA-256. No substitute table or generated stub is used.
+
+Container layer
+Containerfile.compat adds libffi-dev to the original Ubuntu 18.04 build image.
+GN parses Wayland build rules that require libffi.pc even for this X11 target.
+
+Logs
+prepare-chromium.log records patch application and pinned dependency restoration.
+full-build.log includes original failed attempts followed by resumed compilations;
+Ninja reuses successful object files. full-build.sh uses native GCC 7.5, -j8,
+no external sysroot, no Clang/gold/lld, no debug symbols, and v8_os_page_size="16".
+The .full-libcc-build-complete file is written only after both libcc build passes.
+
+003-v8-static-visitor-template.patch
+Reuse the one-line GCC compatibility fix already used successfully for the
+standalone mksnapshot build. FixedBodyDescriptor's StaticVisitor overload must
+call IterateBody<StaticVisitor>(obj): the visitor type is absent from function
+arguments and cannot be deduced. This changes template spelling, not behavior.
+
+004-blink-swap-anchor-declaration.patch
+Forward-declare the existing inline SwapAnchor(LinkedHashSetNodeBase&,
+LinkedHashSetNodeBase&) immediately after LinkedHashSetNodeBase. The template's
+nondependent call appears hundreds of lines before the definition, which GCC's
+two-phase lookup correctly rejects. The function body and container behavior
+remain unchanged; no global -fpermissive flag is introduced.
+
+005-blink-functional-include.patch
+SharedGpuContext.h declares a std::function typedef but did not include its
+standard <functional> header. Include it explicitly rather than relying on
+transitive standard-library includes from another compiler's implementation.

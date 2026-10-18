@@ -1,0 +1,12 @@
+diff --git a/third_party/WebKit/Source/platform/wtf/LinkedHashSet.h b/third_party/WebKit/Source/platform/wtf/LinkedHashSet.h
+--- a/third_party/WebKit/Source/platform/wtf/LinkedHashSet.h
++++ b/third_party/WebKit/Source/platform/wtf/LinkedHashSet.h
+@@ -131,6 +131,8 @@
+   // Should not be used.
+   LinkedHashSetNodeBase& operator=(const LinkedHashSetNodeBase& other);
+ };
++
++inline void SwapAnchor(LinkedHashSetNodeBase& a, LinkedHashSetNodeBase& b);
+ 
+ template <typename ValueArg, typename Allocator>
+ class LinkedHashSetNode : public LinkedHashSetNodeBase {

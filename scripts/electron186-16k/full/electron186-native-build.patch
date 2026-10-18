@@ -1,0 +1,94 @@
+diff --git a/brightray/brightray.gypi b/brightray/brightray.gypi
+index 4473ced..88cbf6d 100644
+--- a/brightray/brightray.gypi
++++ b/brightray/brightray.gypi
+@@ -282,16 +282,22 @@
+             ],
+           }],  # OS=="linux"
+           ['OS=="linux" and target_arch in ["ia32", "x64", "arm64"]', {
+-            'cflags': [
+-              '-flto',
+-            ],
+             'ldflags': [
+-              '-flto',
+               '-fuse-ld=gold',
+-              '-Wl,-plugin-opt,O1',
+-              '-Wl,-plugin-opt,-function-sections',
+               '-Wl,--icf=all',
+             ],
++            'conditions': [
++              ['clang==1', {
++                'cflags': [
++                  '-flto',
++                ],
++                'ldflags': [
++                  '-flto',
++                  '-Wl,-plugin-opt,O1',
++                  '-Wl,-plugin-opt,-function-sections',
++                ],
++              }],
++            ],
+           }],
+         ],
+       },  # Release_Base
+diff --git a/electron.gyp b/electron.gyp
+index 7726ecb..ad14d0a 100644
+--- a/electron.gyp
++++ b/electron.gyp
+@@ -220,6 +220,7 @@
+           'link_settings': {
+             'ldflags': [
+               '-Wl,-z,noexecstack',
++              '-Wl,--version-script=<(source_root)/script/native-linux-exports.version',
+             ],
+           },
+         }],  # OS=="linux"
+@@ -488,11 +489,7 @@
+             '<(js2c_input_dir)/preload_bundle.js',
+           ],
+           'action': [
+-            'npm',
+-            'run',
+-            '--silent',
+-            'browserify',
+-            '--',
++            'node_modules/.bin/browserify',
+             '<@(sandbox_args)',
+             '-o',
+             '<@(_outputs)',
+@@ -507,11 +504,7 @@
+             '<(js2c_input_dir)/isolated_bundle.js',
+           ],
+           'action': [
+-            'npm',
+-            'run',
+-            '--silent',
+-            'browserify',
+-            '--',
++            'node_modules/.bin/browserify',
+             '<@(isolated_args)',
+             '-o',
+             '<@(_outputs)',
+diff --git a/script/lib/util.py b/script/lib/util.py
+index 492c9a4..b34db4d 100644
+--- a/script/lib/util.py
++++ b/script/lib/util.py
+@@ -35,6 +35,8 @@ def get_host_arch():
+     host_arch = 'ia32'
+   elif host_arch in ['x86_64', 'amd64']:
+     host_arch = 'x64'
++  elif host_arch in ['aarch64', 'arm64']:
++    host_arch = 'arm64'
+   elif host_arch.startswith('arm'):
+     host_arch = 'arm'
+ 
+diff --git a/script/native-linux-exports.version b/script/native-linux-exports.version
+new file mode 100644
+index 0000000..c140f8e
+--- /dev/null
++++ b/script/native-linux-exports.version
+@@ -0,0 +1,4 @@
++{
++  local:
++    hb_*;
++};

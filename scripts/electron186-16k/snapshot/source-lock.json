@@ -1,0 +1,25 @@
+{
+  "electron": "v1.8.6",
+  "chromium": "59.0.3071.115",
+  "libchromiumcontent": "d56634abfa9f1068b1cb4788510b4c23b14e8c0a",
+  "v8": "d96f5c48c5f4885d3624198d0b58d05f6839b8d3",
+  "v8_version": "5.9.211.38",
+  "gyp": "e7079f0e0e14108ab0dba58728ff219637458563",
+  "icu": "b34251f8b762f8e2112a89c587855ca4297fed96",
+  "trace_event_common": "06294c8a4a6f744ef284cd63cfe54dbf61eea290",
+  "jinja2": "d34383206fa42d52faa10bb9931d6d538f3a57e0",
+  "markupsafe": "8f45f5cfa0009d2a70589bcda0349b8cb2b72783",
+  "gtest_prod_header": "6f8a66431cb592dad629028a50b3dd418a408c87",
+  "v8_promise_internal_field_count": 1,
+  "v8_enable_i18n_support": 1,
+  "os_page_size_kib": 16,
+  "archive_sha256": {
+    "libcc.tar.gz": "d6611fbc08e451b2d50f8d7daeb5a9d278a39a95add9df9e4e7dfe5a9eed54fc",
+    "common.tar.gz": "6a9aaf1472c9bb3081cddf434e1517e570daa22167e8f56b5e0c3e0e1e70f717",
+    "gyp.tar.gz": "314bdb6dac84ed76439d62d1e5707ebdff15d2d8b202cfb3fbe591609d67d735",
+    "v8-correct.tar.gz": "e48a92b5be1b26f3b47726e248c43ecbe196fda42646f04d6cd14f0aad7f1f15",
+    "icu.tar.gz": "e84db96d5b3f5cab43d8f72ba4d82289a46a1dd4a5fb092330801ddd733fdc28",
+    "markupsafe.tar.gz": "05e8f1488599fac25c15346c3a33a35a89e68ddaa2eb540c137dcf0e0ff95dba",
+    "jinja2.tar.gz": "ea13d315ed587dce5e33db758b6fbbd54b7e9091b083b521b1f8ad64f41e05e8"
+  }
+}

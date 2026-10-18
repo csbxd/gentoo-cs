@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "platform": {
+    "arch": "aarch64",
+    "pageSize": 16384,
+    "kernel": "7.1.13-p3-asahi-dist-local"
+  },
+  "versions": {
+    "electron": "1.8.6",
+    "chromium": "59.0.3071.115",
+    "node": "8.2.1",
+    "v8": "5.9.211.38",
+    "nativeModuleABI": 57,
+    "xunlei": "1.0.0.5"
+  },
+  "checks": {
+    "allocatorDebugAndRelease": true,
+    "elf16kCount": 8,
+    "rendererJavaScriptAnswer": 42,
+    "xvfbStableSeconds": 120,
+    "xvfbPageCount": 4,
+    "xvfbRendererCrashes": 0,
+    "xvfbJavaScriptExceptions": 0,
+    "mainAndLoginAndNewTaskPanel": true,
+    "realDesktopDefaultGPUAndSandboxFlags": true,
+    "realDesktopMenuExitCode": 0,
+    "httpDownloadBytes": 131072,
+    "httpGETRequests": 1,
+    "downloadTaskCompleted": true,
+    "downloadErrorCode": 0,
+    "downloadSHA256": "2af5d3dffc8442daccee445639ed726c2148eb693ee20407214076bc65c14fc3",
+    "downloadTestExitCode": 0
+  },
+  "scope": [
+    "Account login and VIP/account service behavior were not accepted as part of the test.",
+    "A nonfatal Pipe ECONNRESET was observed in desktop mode; UI, transfer and menu exit checks passed.",
+    "SIGINT uses the legacy close-to-tray path; normal Exit menu was separately verified."
+  ],
+  "installedPackage": "net-misc/xunlei-download-1.0.0.5-r2::gentoo-cs",
+  "installedChecks": {
+    "launcher": "/usr/bin/xunlei-download",
+    "runtime": "/opt/xunlei-download",
+    "display": ":0",
+    "isolated_profile": true,
+    "explicit_disable_gpu": false,
+    "explicit_no_sandbox": false,
+    "observation_seconds": 15,
+    "page_titles": [
+      "迅雷",
+      "index.html",
+      "迅雷个人中心-登录"
+    ],
+    "main_interface_rendered": true,
+    "login_interface_rendered": true,
+    "renderer_crash_events": 0,
+    "javascript_exception_count": 1,
+    "exit_request_helper_code": 0,
+    "natural_exit_code": 0,
+    "passed": true,
+    "javascript_error_categories": [
+      "Error: read ECONNRESET"
+    ]
+  },
+  "vendorRpathRemovedWithoutCodeOrLoadLayoutChanges": true
+}

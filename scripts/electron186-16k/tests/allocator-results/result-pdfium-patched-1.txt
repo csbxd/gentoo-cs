@@ -1,0 +1,4 @@
+pdfium-patched-1: exit=0
+kernel=16384 allocation=16384 system=16384 partition=65536 super=2097152 dcheck=1
+reachable bucket classes=116
+PASS: allocate/free, all size classes, direct maps, realloc, purge, recommit, data preservation

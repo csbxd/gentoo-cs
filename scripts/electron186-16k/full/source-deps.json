@@ -1,0 +1,10 @@
+[
+  {
+    "name": "freetype",
+    "revision": "5a3490e054bda8a318ebde482c7fb30213cab3d9",
+    "target": "third_party/freetype/src",
+    "archive": "freetype-5a3490e054bda8a318ebde482c7fb30213cab3d9.tar.gz",
+    "sha256": "43178a6cec5d7e51c762c8cc34f40925acb3e9b652e2bf6b369dc2abf8ec668f",
+    "url": "https://chromium.googlesource.com/chromium/src/third_party/freetype2/+archive/5a3490e054bda8a318ebde482c7fb30213cab3d9.tar.gz"
+  }
+]

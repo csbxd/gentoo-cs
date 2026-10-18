@@ -1,0 +1,61 @@
+{
+  "build_exit_code": 0,
+  "generator_exit_code": 0,
+  "host_page_size": 16384,
+  "compiler": "g++ (Gentoo 16.2.1_p20260926 p1) 16.2.1 20260926",
+  "patched_v8": "d96f5c48c5f4885d3624198d0b58d05f6839b8d3",
+  "original_snapshot": {
+    "path": "/opt/xunlei-download/snapshot_blob.bin",
+    "size": 1578904,
+    "sha256": "a7d57035fca38eacc9403e19d6e4f7098c2e4831cd3e31df183b30e4d18b7bc8",
+    "magic": "0xc0de04d6",
+    "external_references": 1238,
+    "version_hash": "0xc39b15df",
+    "reservation_chunk_sizes": [
+      0,
+      423944,
+      500992,
+      503424,
+      225792,
+      9592,
+      0
+    ],
+    "reservation_raw": [
+      "0x80000000",
+      "0x80067808",
+      "0x7a500",
+      "0x7ae80",
+      "0x80037200",
+      "0x80002578",
+      "0x80000000"
+    ]
+  },
+  "snapshot_16k": {
+    "path": "/home/bxd/Documents/Codex/2026-10-18/opt-xunlei-download-thunder-x20/work/v8-source-build/snapshot_blob-16k.bin",
+    "size": 1538208,
+    "sha256": "e8c0b57758ffac16f431abaa9a87db85e3a8eab647f275a9e739bc180fb1cdb6",
+    "magic": "0xc0de04d6",
+    "external_references": 1238,
+    "version_hash": "0xc39b15df",
+    "reservation_chunk_sizes": [
+      0,
+      374640,
+      466688,
+      472416,
+      291104,
+      9592,
+      0
+    ],
+    "reservation_raw": [
+      "0x80000000",
+      "0x8005b770",
+      "0x71f00",
+      "0x73560",
+      "0x80047120",
+      "0x80002578",
+      "0x80000000"
+    ]
+  },
+  "max_code_page_area_16k": 475136,
+  "mksnapshot_sha256": "6f19f084fcb7a417e3853d9d4a8b8417ea1d2846d277ff95458a62d34e6a37db"
+}

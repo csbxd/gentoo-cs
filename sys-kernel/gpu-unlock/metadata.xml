@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>csbxd@users.noreply.github.com</email>
+		<name>csbxd</name>
+	</maintainer>
+	<use>
+		<flag name="bench">Build deterministic CUDA/cuBLAS matrix throughput and correctness checks</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">Zagitta/gpu-unlock</remote-id>
+	</upstream>
+</pkgmetadata>

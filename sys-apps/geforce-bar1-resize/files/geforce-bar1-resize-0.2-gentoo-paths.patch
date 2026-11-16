@@ -1,0 +1,14 @@
+--- a/systemd/geforce-bar1-resize.service
++++ b/systemd/geforce-bar1-resize.service
+@@ -14,3 +14,3 @@
+ Type=oneshot
+-ExecStart=/usr/local/sbin/geforce-bar1-resize boot
++ExecStart=/usr/sbin/geforce-bar1-resize boot
+ RemainAfterExit=yes
+--- a/systemd/geforce-bar1-resize-record@.service
++++ b/systemd/geforce-bar1-resize-record@.service
+@@ -13,3 +13,3 @@
+ Type=exec
+-ExecStart=/usr/local/sbin/geforce-bar1-resize record --delay %I
++ExecStart=/usr/sbin/geforce-bar1-resize record --delay %I
+ StandardOutput=journal

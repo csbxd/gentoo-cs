@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>r27153733@users.noreply.github.com</email>
+    <name>csbxd</name>
+  </maintainer>
+  <use>
+    <flag name="verify">Install BAR1 memory mapping diagnostic sources and scripts</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">noon-at-cgn/geforce-bar1-resize</remote-id>
+  </upstream>
+</pkgmetadata>

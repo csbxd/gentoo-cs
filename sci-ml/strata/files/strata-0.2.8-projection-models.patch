@@ -1,0 +1,163 @@
+--- a/serve/server.py
++++ b/serve/server.py
+@@ -4303,6 +4303,33 @@
+         asked = req.get("model") if isinstance(req, dict) else None
+         return asked if isinstance(asked, str) and asked in self.aliases else self.model
+ 
++    def model_projection_default(self, req) -> bool | None:
++        """An explicitly registered <model>-sp alias opts into two projection presets.
++
++        The model name selects a request default, not another engine. Explicit request
++        parameters still win, including the existing web projection switch.
++        """
++        projection_name = self.model + "-sp"
++        if projection_name not in self.aliases:
++            return None
++        asked = req.get("model") if isinstance(req, dict) else None
++        if asked == projection_name:
++            return True
++        if asked in (None, self.model):
++            return False
++        return None
++
++    def request_sampling(self, sampling, thinking):
++        """Request > model preset > global defaults; never mutate shared settings."""
++        defaults = {**model_card_sampling(self.model_arch, thinking), **self.sampling_defaults, **self.shared}
++        projection = self.model_projection_default(sampling)
++        if projection is not None:
++            defaults["experimental_speed_projection"] = projection
++        if defaults:
++            req_values = {k: v for k, v in (sampling or {}).items() if v is not None}
++            return {**defaults, **req_values}
++        return sampling
++
+     def reported_ctx(self) -> int:
+         """The context the endpoints report (/v1/status, /v1/models, /props, /health, /slots, /metrics): the engine's,
+         or the last one it reported while it restarts (max_context is 0 until READY, and a client that sizes its
+@@ -5278,12 +5305,8 @@
+              declared_only=False) -> Iterator[tuple[str, object]]:
+         """Yields ("event", Event) as text arrives, then ("done", {"finish": .., "completion_tokens": ..}).
+         `force` (forced_call): the opening of the call the reply must make - see prepare()."""
+-        # the model card's sampling for this thinking state, then the config's block, then the Chat settings shared with
+-        # apps; the request's own fields win over all of them
+-        defaults = {**model_card_sampling(self.model_arch, thinking), **self.sampling_defaults, **self.shared}
+-        if defaults:                   # the request's own fields win (explicit 0 stays greedy)
+-            req_values = {k: v for k, v in (sampling or {}).items() if v is not None}
+-            sampling = {**defaults, **req_values}
++        # All three API adapters use this request-local merge; aliases share this one engine and FIFO.
++        sampling = self.request_sampling(sampling, thinking)
+         # #123: read after the merge, so a budget shared through POST /settings is seen like the other keys
+         budget = self.reasoning_budget(sampling) if thinking else None
+         if thinking and not budget and self.answer_room and max_new and max_new >= ANSWER_ROOM_MIN_CAP:
+@@ -7177,6 +7200,10 @@
+                     if svc.aliases:                       # #297: the aliases, and each one listed under its own id
+                         model["aliases"] = list(svc.aliases)
+                     data = [model, *({**model, "id": x, "alias_of": svc.model} for x in svc.aliases)]
++                    for entry in data:
++                        projection = svc.model_projection_default({"model": entry["id"]})
++                        if projection is not None:
++                            entry["default_parameters"] = {"experimental_speed_projection": projection}
+                     data = data if loaded else []
+                     if svc.images is not None:            # the image model: POST /v1/images/generations
+                         data.append({"id": svc.images.model, "object": "model", "status": {"value": "loaded"},
+--- /dev/null
++++ b/tests/terminal/test_projection_model_alias.py
+@@ -0,0 +1,44 @@
++import unittest
++from serve.server import Service
++
++class ProjectionAliasTests(unittest.TestCase):
++    def service(self, enabled=True):
++        s=Service.__new__(Service)
++        s.model='test-model';s.aliases=['test-model-sp'] if enabled else []
++        s.model_arch=None;s.sampling_defaults={'experimental_speed_projection':False,'temperature':0.8}
++        s.shared={}
++        return s
++    def test_registered_names_have_distinct_defaults(self):
++        s=self.service()
++        self.assertFalse(s.request_sampling({'model':s.model},False)['experimental_speed_projection'])
++        self.assertTrue(s.request_sampling({'model':s.model+'-sp'},False)['experimental_speed_projection'])
++        self.assertEqual(s.model_for({'model':s.model+'-sp'}),s.model+'-sp')
++    def test_existing_aliases_do_not_opt_in(self):
++        s=self.service(False);s.aliases=['ordinary'];s.sampling_defaults['experimental_speed_projection']=True
++        self.assertIsNone(s.model_projection_default({'model':s.model}))
++        self.assertTrue(s.request_sampling({'model':'ordinary'},False)['experimental_speed_projection'])
++    def test_explicit_request_still_wins(self):
++        s=self.service()
++        self.assertFalse(s.request_sampling({'model':s.model+'-sp','experimental_speed_projection':False},False)['experimental_speed_projection'])
++        self.assertTrue(s.request_sampling({'model':s.model,'experimental_speed_projection':True},False)['experimental_speed_projection'])
++    def test_model_preset_overrides_global_defaults(self):
++        s=self.service();s.shared={'experimental_speed_projection':False}
++        self.assertTrue(s.request_sampling({'model':s.model+'-sp'},False)['experimental_speed_projection'])
++        s.shared['experimental_speed_projection']=True
++        self.assertFalse(s.request_sampling({'model':s.model},False)['experimental_speed_projection'])
++    def test_requests_do_not_mutate_global_state(self):
++        s=self.service();before=(dict(s.shared),dict(s.sampling_defaults))
++        for name in (s.model+'-sp',s.model,s.model+'-sp'):
++            request={'model':name,'temperature':0}
++            self.assertEqual(s.request_sampling(request,False)['temperature'],0)
++            self.assertEqual(request,{'model':name,'temperature':0})
++        self.assertEqual((s.shared,s.sampling_defaults),before)
++    def test_non_projection_parameters_keep_existing_precedence(self):
++        s=self.service();s.shared={'temperature':0.6,'top_p':0.9}
++        r=s.request_sampling({'model':s.model+'-sp','temperature':0,'top_p':None},False)
++        self.assertEqual(r['temperature'],0);self.assertEqual(r['top_p'],0.9)
++    def test_no_defaults_preserves_none(self):
++        s=self.service(False);s.shared={};s.sampling_defaults={}
++        self.assertIsNone(s.request_sampling(None,False))
++
++if __name__=='__main__':unittest.main()
+--- /dev/null
++++ b/docs/API_PROJECTION_MODELS.md
+@@ -0,0 +1,51 @@
++# Speed projection as two API model names
++
++Local patch for Strata v0.2.8 / engine 0.1.54. The Python service gives an explicitly registered
++`<model>-sp` alias a speed-projection default of `true`; the canonical model defaults to `false`.
++One loaded engine, one model's weights and the existing FIFO serve both names. The C++ engine is unchanged.
++
++The speed-projection vector must already be loaded by the engine. Register the alias through the existing
++upstream config field; no new config keys or client configuration are required:
++
++```json
++"aliases": ["qwen3.8-flash-next-iq3_xxs-sp"]
++```
++
++API model names:
++
++| `model` | Default `experimental_speed_projection` |
++| --- | --- |
++| `qwen3.8-flash-next-iq3_xxs` | `false` |
++| `qwen3.8-flash-next-iq3_xxs-sp` | `true` |
++
++The convention is opt-in: without that registered alias, existing behavior stays unchanged. Other aliases
++keep the upstream behavior. `/v1/models` and `/models` list both names with their existing context and modality
++metadata, plus `default_parameters.experimental_speed_projection` for these presets.
++
++Precedence is an explicit request field, then the named model's projection preset, then existing global defaults.
++Thus `experimental_speed_projection: false` explicitly sent with the `-sp` model still turns projection off,
++and the existing web switch continues working. Selecting the model name alone is sufficient when the client
++omits the projection field. No request changes global settings or starts another engine.
++
++OpenAI Chat Completions, OpenAI Responses and Anthropic Messages use the same sampling merge. Responses streaming
++also keeps the selected model name. Current-session prefix reuse works within each projection mode. Switching
++projection modes invalidates the existing KV/checkpoints through the upstream engine's existing checks; the two
++modes must not share KV computed under different projection states. Parking remains independently configurable.
++
++Apply and check from the source checkout:
++
++```sh
++git apply --check /opt/strata/local-patches/0003-api-projection-models.patch
++git apply /opt/strata/local-patches/0003-api-projection-models.patch
++python3.14 -m unittest tests.terminal.test_projection_model_alias -v
++sudo systemctl restart strata.service
++```
++
++The local deployment uses 262144 context, INT8 KV streaming with resident window 32768, parking off, automatic
++ROUTE_PRIOR, and Codex title bypass. This patch does not change those choices or any Codex settings. No CUDA build
++is needed for this Python-only patch. On future updates, run `git apply --check` and review conflicts; do not force
++an old patch onto changed sampling code. To remove, reverse this patch and remove the `-sp` entry from `aliases`.
++
++Related upstream proposals: [issue #4048](https://github.com/Niko1221/Strata/issues/4048) and
++[PR #4050](https://github.com/Niko1221/Strata/pull/4050). This focused patch uses the existing alias list and covers
++Responses as well as chat and messages. It has not been submitted upstream.

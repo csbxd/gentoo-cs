@@ -1,0 +1,25 @@
+[Unit]
+Description=Strata CPU/CUDA inference server
+After=network.target nvidia-persistenced.service
+ConditionPathExists=/etc/strata/server.json
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=strata
+Group=strata
+WorkingDirectory=/var/lib/strata
+Environment=PYTHONNOUSERSITE=1
+Environment=STRATA_INSTALL_DIR=@PREFIX@/opt/strata
+Environment=LD_LIBRARY_PATH=@PREFIX@/opt/cuda/lib64
+LimitMEMLOCK=infinity
+ExecStart=@PYTHON@ -s @PREFIX@/opt/strata/serve/server.py --engine strata --config /etc/strata/server.json --port 8080
+Restart=on-failure
+RestartSec=10
+KillSignal=SIGINT
+KillMode=mixed
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target

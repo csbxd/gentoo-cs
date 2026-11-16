@@ -1,0 +1,27 @@
+{
+  "exe": "/opt/strata/engine/strata",
+  "cwd": "/var/lib/strata",
+  "args": [
+    "--pack", "/var/lib/strata/data/packs/iq3_xxs",
+    "--native", "/var/lib/strata/data/models/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf",
+    "--ple-gguf", "/var/lib/strata/data/models/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf",
+    "--expert-profile", "/var/lib/strata/data/expert-profile.bin",
+    "--expert-cache", "auto",
+    "--resident-experts",
+    "--prefill", "auto",
+    "--max-context", "262144",
+    "--kv", "int8",
+    "--kv-resident", "20480",
+    "--conversation-cache-mib", "0",
+    "--vram-reserve-mib", "1024"
+  ],
+  "tokenizer": "/var/lib/strata/data/packs/iq3_xxs/tokenizer",
+  "model_name": "qwen3.8-flash-next-iq3_xxs",
+  "log": "/var/log/strata/engine.log",
+  "lib_dirs": ["/opt/cuda/bin", "/opt/cuda/lib64"],
+  "host": "127.0.0.1",
+  "port": 8080,
+  "parallel": 1,
+  "open_browser": false,
+  "sampling": {"experimental_speed_projection": false}
+}

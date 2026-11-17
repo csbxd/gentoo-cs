@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="test"
 RESTRICT="!test? ( test )"
-DEPEND="dev-cpp/cpp-httplib:= dev-cpp/nlohmann_json dev-libs/openssl:= media-video/mpv[libmpv]"
+DEPEND="dev-cpp/cpp-httplib:=[ssl] dev-cpp/nlohmann_json dev-libs/openssl:= media-video/mpv[libmpv]"
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
 

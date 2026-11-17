@@ -111,7 +111,7 @@ DEPEND="
 	dev-cpp/cpp-httplib:=
 	dev-cpp/nlohmann_json
 	dev-libs/openssl:=
-	media-video/ffmpeg:=[nvenc,zlib]
+	media-video/ffmpeg:=[dav1d,nvenc,openssl,zlib]
 	~sci-libs/tensorrt-rtx-1.7.1.116:=
 "
 RDEPEND="${DEPEND}

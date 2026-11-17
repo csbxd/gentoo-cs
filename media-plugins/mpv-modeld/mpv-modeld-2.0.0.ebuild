@@ -14,8 +14,9 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="test"
 RESTRICT="!test? ( test )"
-DEPEND="dev-cpp/cpp-httplib:=[ssl] dev-cpp/nlohmann_json dev-libs/openssl:= media-video/mpv[libmpv]"
-RDEPEND="${DEPEND}"
+COMMON_DEPEND="dev-cpp/cpp-httplib:=[ssl] dev-libs/openssl:= >=media-video/mpv-0.41.0[libmpv]"
+DEPEND="${COMMON_DEPEND} dev-cpp/nlohmann_json"
+RDEPEND="${COMMON_DEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_configure() {
@@ -27,11 +28,17 @@ src_configure() {
 	cmake_src_configure
 }
 
+src_install() {
+	cmake_src_install
+	docinto docs
+	dodoc docs/api.md docs/architecture.md docs/validation-2.0.0.json
+}
+
 pkg_postinst() {
 	elog "Link /usr/$(get_libdir)/mpv/scripts/modeld.so into ~/.config/mpv/scripts/."
 	elog "Configure ~/.config/modeld/client.json and a private API token file."
 	elog "Ctrl+Shift+i toggles interpolation; each newly opened file starts with the original video."
-	elog "Requires modeld >= 0.1.7 on the server for processed video/audio as main media."
+	elog "Requires a modeld 2.0 server and the new strict client.json configuration."
 	elog "mpv handles cache waiting; completed chunks are retained in a bounded memory cache."
 	elog "Restart mpv after upgrading. Private diagnostics: modelctl logs (modelctl log-path)."
 }

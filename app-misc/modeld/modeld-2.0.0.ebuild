@@ -36,25 +36,21 @@ CRATES="
 	itoa@1.0.19
 	libc@0.2.191
 	litemap@0.8.3
-	log@0.4.35
 	matchit@0.8.4
 	memchr@2.8.3
 	mime@0.3.18
 	mio@1.2.5
-	once_cell@1.21.4
 	percent-encoding@2.3.2
 	pin-project-lite@0.2.17
 	potential_utf@0.1.6
 	proc-macro2@1.0.107
 	quote@1.0.47
 	r-efi@5.3.0
-	ryu@1.0.23
 	serde@1.0.229
 	serde_core@1.0.229
 	serde_derive@1.0.229
 	serde_json@1.0.154
 	serde_path_to_error@0.1.20
-	serde_urlencoded@0.7.1
 	signal-hook-registry@1.4.8
 	slab@0.4.12
 	smallvec@1.16.5
@@ -70,8 +66,6 @@ CRATES="
 	tower-layer@0.3.3
 	tower-service@0.3.3
 	tower@0.5.3
-	tracing-core@0.1.36
-	tracing@0.1.44
 	unicode-ident@1.0.27
 	url@2.5.8
 	utf8_iter@1.1.0
@@ -106,15 +100,17 @@ KEYWORDS="~amd64"
 IUSE="test"
 RESTRICT="!test? ( test )"
 
-DEPEND="
+COMMON_DEPEND="
 	acct-user/modeld
-	dev-cpp/cpp-httplib:=
-	dev-cpp/nlohmann_json
 	dev-libs/openssl:=
 	media-video/ffmpeg:=[dav1d,nvenc,openssl,zlib]
 	~sci-libs/tensorrt-rtx-1.7.1.116:=
 "
-RDEPEND="${DEPEND}
+DEPEND="${COMMON_DEPEND}
+	dev-cpp/nlohmann_json
+	test? ( dev-cpp/cpp-httplib:=[ssl] )
+"
+RDEPEND="${COMMON_DEPEND}
 	~sci-libs/modeld-rife-4.26
 "
 BDEPEND="virtual/pkgconfig"
@@ -168,6 +164,8 @@ src_install() {
 	newinitd packaging/modeld.initd modeld
 	systemd_dounit packaging/modeld.service
 	dodoc README.md
+	docinto docs
+	dodoc docs/api.md docs/architecture.md docs/validation-2.0.0.json
 }
 
 pkg_postinst() {
@@ -177,7 +175,8 @@ pkg_postinst() {
 		chown root:modeld "${EROOT}/etc/modeld/api.token" || die
 		chmod 0640 "${EROOT}/etc/modeld/api.token" || die
 	fi
-	elog "Configure listen/public_url in /etc/modeld/server.json for your NetBird address."
+	elog "Configure the 2.0 server.json listen address and inference/limits/output sections."
 	elog "Enable modeld with systemd or OpenRC. API credentials are in /etc/modeld/api.token."
 	elog "Only frame interpolation is implemented. The inference profile is native FP32 with TF32 disabled."
+	elog "2.0 requires matching clients and the new strict configuration; API: /api/v2, health: /healthz."
 }

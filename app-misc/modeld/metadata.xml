@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person"><email>csbxd@users.noreply.github.com</email><name>csbxd</name></maintainer>
+  <upstream><remote-id type="github">csbxd/modeld</remote-id></upstream>
+</pkgmetadata>

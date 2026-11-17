@@ -31,4 +31,5 @@ pkg_postinst() {
 	elog "Link /usr/$(get_libdir)/mpv/scripts/modeld.so into ~/.config/mpv/scripts/."
 	elog "Configure ~/.config/modeld/client.json and a private API token file."
 	elog "Ctrl+Shift+i toggles interpolation; each newly opened file starts with the original video."
+	elog "Restart mpv after upgrading. Private diagnostics: modelctl logs (modelctl log-path)."
 }

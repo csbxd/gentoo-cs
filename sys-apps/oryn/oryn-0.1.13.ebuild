@@ -1,0 +1,243 @@
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CRATES="
+	aho-corasick@1.1.5
+	allocator-api2@0.2.21
+	android_system_properties@0.1.6
+	anyhow@1.0.104
+	approx@0.5.1
+	atomic@0.6.1
+	autocfg@1.5.1
+	base64@0.22.1
+	bit-set@0.5.3
+	bit-vec@0.6.3
+	bitflags@1.3.2
+	bitflags@2.13.2
+	block-buffer@0.10.4
+	bumpalo@3.20.3
+	by_address@1.2.1
+	bytemuck@1.25.2
+	castaway@0.2.4
+	cc@1.8.0
+	cfg-if@1.0.5
+	cfg_aliases@0.2.2
+	chrono@0.4.45
+	compact_str@0.9.1
+	convert_case@0.10.0
+	core-foundation-sys@0.8.7
+	cpufeatures@0.2.17
+	critical-section@1.2.0
+	crossterm@0.29.0
+	crossterm_winapi@0.9.1
+	crypto-common@0.1.7
+	csscolorparser@0.6.2
+	darling@0.24.1
+	darling_core@0.24.1
+	darling_macro@0.24.1
+	deltae@0.3.2
+	deranged@0.5.9
+	derive_more@2.1.1
+	derive_more-impl@2.1.1
+	digest@0.10.7
+	dispatch2@0.3.1
+	document-features@0.2.12
+	either@1.19.0
+	equivalent@1.0.3
+	errno@0.3.14
+	euclid@0.22.14
+	fancy-regex@0.11.0
+	filedescriptor@0.8.3
+	find-msvc-tools@0.1.14
+	finl_unicode@1.5.0
+	fixedbitset@0.4.2
+	fnv@1.0.7
+	foldhash@0.2.0
+	futures-core@0.3.34
+	futures-task@0.3.34
+	futures-util@0.3.34
+	generic-array@0.14.7
+	getrandom@0.3.4
+	getrandom@0.4.3
+	hashbrown@0.17.1
+	heck@0.5.0
+	hex@0.4.3
+	iana-time-zone@0.1.65
+	iana-time-zone-haiku@0.1.2
+	ident_case@1.0.1
+	indoc@2.0.8
+	instability@0.3.14
+	itertools@0.14.0
+	itoa@1.0.18
+	js-sys@0.3.106
+	kasuari@0.4.13
+	lab@0.11.0
+	lazy_static@1.5.1
+	libc@0.2.190
+	libloading@0.9.0
+	libm@0.2.16
+	line-clipping@0.3.8
+	linux-raw-sys@0.12.1
+	litrs@1.0.1
+	lock_api@0.4.14
+	log@0.4.34
+	lru@0.18.5
+	mac_address@1.2.1
+	memchr@2.8.3
+	memmem@0.1.1
+	memoffset@0.9.1
+	minimal-lexical@0.2.1
+	mio@1.2.4
+	nix@0.29.0
+	nix@0.31.3
+	nom@7.1.3
+	ntapi@0.4.3
+	num-conv@0.2.2
+	num-derive@0.4.2
+	num-traits@0.2.19
+	num_threads@0.1.7
+	objc2@0.6.5
+	objc2-core-foundation@0.3.2
+	objc2-encode@4.1.0
+	objc2-foundation@0.3.2
+	objc2-io-kit@0.3.2
+	objc2-open-directory@0.3.2
+	once_cell@1.21.4
+	ordered-float@4.6.0
+	palette@0.7.7
+	palette_derive@0.7.7
+	palette_math@0.7.7
+	parking_lot@0.12.5
+	parking_lot_core@0.9.12
+	pest@2.9.4
+	pest_derive@2.9.4
+	pest_generator@2.9.4
+	pest_meta@2.9.4
+	phf@0.11.3
+	phf_codegen@0.11.3
+	phf_generator@0.11.3
+	phf_macros@0.11.3
+	phf_shared@0.11.3
+	pin-project-lite@0.2.17
+	portable-atomic@1.15.0
+	powerfmt@0.2.1
+	proc-macro2@1.0.107
+	psm@0.1.24
+	quote@1.0.47
+	r-efi@5.3.0
+	r-efi@6.0.0
+	rand@0.8.8
+	rand_core@0.6.4
+	ratatui@0.30.2
+	ratatui-core@0.1.2
+	ratatui-crossterm@0.1.2
+	ratatui-macros@0.7.2
+	ratatui-termina@0.1.0
+	ratatui-termwiz@0.1.2
+	ratatui-widgets@0.3.2
+	redox_syscall@0.5.18
+	regex@1.13.1
+	regex-automata@0.4.18
+	regex-syntax@0.8.11
+	rustc_version@0.4.1
+	rustix@1.1.5
+	rustversion@1.0.23
+	ryu@1.0.23
+	scopeguard@1.2.0
+	semver@1.0.28
+	serde@1.0.229
+	serde_core@1.0.229
+	serde_derive@1.0.229
+	serde_json@1.0.154
+	sha2@0.10.9
+	shlex@2.0.1
+	signal-hook@0.3.18
+	signal-hook-mio@0.2.5
+	signal-hook-registry@1.4.8
+	siphasher@1.0.4
+	slab@0.4.12
+	smallvec@1.16.3
+	stacker@0.1.25
+	static_assertions@1.1.0
+	strsim@0.11.1
+	strum@0.28.0
+	strum_macros@0.28.0
+	syn@1.0.109
+	syn@2.0.119
+	syn@3.0.9
+	sysinfo@0.39.6
+	termina@0.3.3
+	terminfo@0.9.0
+	termios@0.3.3
+	termwiz@0.23.3
+	thiserror@1.0.69
+	thiserror@2.0.21
+	thiserror-impl@1.0.69
+	thiserror-impl@2.0.21
+	time@0.3.55
+	time-core@0.1.9
+	typenum@1.20.1
+	ucd-trie@0.1.7
+	unicode-ident@1.0.27
+	unicode-segmentation@1.13.3
+	unicode-truncate@2.0.1
+	unicode-width@0.2.2
+	utf8parse@0.2.2
+	uuid@1.28.0
+	version_check@0.9.5
+	vtparse@0.6.2
+	wasi@0.11.1+wasi-snapshot-preview1
+	wasip2@1.0.4+wasi-0.2.12
+	wasm-bindgen@0.2.129
+	wasm-bindgen-macro@0.2.129
+	wasm-bindgen-macro-support@0.2.129
+	wasm-bindgen-shared@0.2.129
+	wezterm-bidi@0.2.3
+	wezterm-blob-leases@0.1.1
+	wezterm-color-types@0.3.0
+	wezterm-dynamic@0.2.1
+	wezterm-dynamic-derive@0.1.1
+	wezterm-input-types@0.1.0
+	winapi@0.3.9
+	winapi-i686-pc-windows-gnu@0.4.0
+	winapi-x86_64-pc-windows-gnu@0.4.0
+	windows@0.62.2
+	windows-collections@0.3.2
+	windows-core@0.62.2
+	windows-future@0.3.2
+	windows-implement@0.60.2
+	windows-interface@0.59.3
+	windows-link@0.2.1
+	windows-numerics@0.3.1
+	windows-result@0.4.1
+	windows-strings@0.5.1
+	windows-sys@0.61.2
+	windows-threading@0.2.1
+	wit-bindgen@0.57.1
+	zmij@1.0.23
+"
+
+RUST_MIN_VER="1.95"
+inherit cargo
+
+DESCRIPTION="Terminal hardware monitor with CPU, GPU and storage temperatures"
+HOMEPAGE="https://github.com/rusty725/oryn"
+SRC_URI="
+	https://github.com/rusty725/oryn/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
+	${CARGO_CRATE_URIS}
+"
+
+# The compiled binary includes statically linked Rust crates.
+LICENSE="MIT Apache-2.0 ISC Unicode-3.0 ZLIB"
+SLOT="0"
+KEYWORDS="~amd64"
+
+DOCS=( README.md THIRD_PARTY_NOTICES.md LICENSES-dependencies.txt )
+
+src_install() {
+	cargo_src_install
+	doman doc/oryn.1
+	einstalldocs
+}
